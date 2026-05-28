@@ -1,0 +1,129 @@
+.section {
+  margin: 0 22px 18px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 26px;
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.9), rgba(244, 249, 244, 0.76)),
+    var(--white);
+  box-shadow: var(--shadow);
+  transition: background 520ms var(--ease-out-expo), border-color 520ms ease;
+  animation: playerEnter 680ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.topRow p {
+  margin: 0 0 6px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.topRow h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.state {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 99px;
+  background: var(--scene-tint, rgba(93, 128, 107, 0.12));
+  color: var(--scene-accent, #234b37);
+  font-size: 12px;
+  font-weight: 800;
+  transition: background 420ms var(--ease-out-expo), color 420ms var(--ease-out-expo);
+}
+
+.controlBody {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.playBtn {
+  display: grid;
+  width: 70px;
+  height: 70px;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 24%, var(--scene-accent, #5d806b), var(--sage-dark));
+  color: #fff;
+  box-shadow: 0 16px 28px rgba(35, 75, 55, 0.24);
+  transition: transform 180ms var(--ease-out-expo), background 420ms var(--ease-out-expo), box-shadow 420ms var(--ease-out-expo);
+  animation: playPulse 3.8s ease-in-out infinite;
+}
+
+.playBtn:active {
+  transform: scale(0.96);
+}
+
+.playBtn svg {
+  width: 26px;
+  height: 26px;
+}
+
+.playBtn rect,
+.playBtn path {
+  fill: currentColor;
+}
+
+.sliders {
+  display: grid;
+  gap: 14px;
+}
+
+.sliderRow {
+  display: grid;
+  gap: 6px;
+}
+
+.sliderRow span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sliderRow b {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sliderRow em {
+  color: var(--scene-accent, #234b37);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 800;
+  transition: color 420ms var(--ease-out-expo);
+}
+
+@keyframes playerEnter {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+}
+
+@keyframes playPulse {
+  50% {
+    box-shadow: 0 18px 38px rgba(35, 75, 55, 0.34);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .playBtn {
+    animation: none !important;
+  }
+}

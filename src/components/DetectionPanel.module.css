@@ -1,0 +1,961 @@
+/* ================================================================
+   HERO — DetectionPanel
+   ================================================================ */
+
+.hero {
+  --hero-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  padding: 18px 22px 22px;
+}
+
+/* ================================================================
+   SCENE COLOR VARIABLES
+   ================================================================ */
+
+.rain_focus {
+  --scene-a: #6f8fa0;
+  --scene-b: #dcecf0;
+  --scene-c: #9fb8c4;
+  --scene-ink: #365968;
+  --scene-angle: -10deg;
+  --weather-opacity: 0.56;
+  --weather-speed: 1.9s;
+  --scene-sky-top: #eaf0f3;
+}
+
+.cafe_murmur {
+  --scene-a: #8b6f50;
+  --scene-b: #f0dfbf;
+  --scene-c: #c8975b;
+  --scene-ink: #674620;
+  --scene-angle: 8deg;
+  --weather-opacity: 0.42;
+  --weather-speed: 3.2s;
+  --scene-sky-top: #faf3e4;
+}
+
+.ocean_low {
+  --scene-a: #527c89;
+  --scene-b: #d9eef1;
+  --scene-c: #7bb7c5;
+  --scene-ink: #245764;
+  --scene-angle: -4deg;
+  --weather-opacity: 0.5;
+  --weather-speed: 4.2s;
+  --scene-sky-top: #e8f5f5;
+}
+
+.forest_breeze {
+  --scene-a: #5d806b;
+  --scene-b: #dcebd4;
+  --scene-c: #98ba83;
+  --scene-ink: #234b37;
+  --scene-angle: 5deg;
+  --weather-opacity: 0.34;
+  --weather-speed: 5.2s;
+  --scene-sky-top: #edf4ee;
+}
+
+.deep_focus {
+  --scene-a: #53626f;
+  --scene-b: #dfe5eb;
+  --scene-c: #667089;
+  --scene-ink: #303b4c;
+  --scene-angle: -7deg;
+  --weather-opacity: 0.28;
+  --weather-speed: 6s;
+  --scene-sky-top: #e8ecf0;
+}
+
+/* ================================================================
+   HERO COPY
+   ================================================================ */
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+}
+
+.kicker {
+  margin: 0 0 10px;
+  color: var(--scene-accent, #5d806b);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 500ms var(--hero-ease);
+}
+
+.headline {
+  max-width: 330px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1.14;
+}
+
+.headline span {
+  display: block;
+  color: var(--scene-accent, #5d806b);
+  transition: color 500ms var(--hero-ease);
+}
+
+.subhead {
+  max-width: 320px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ================================================================
+   ILLUSTRATION — Stage
+   ================================================================ */
+
+.illustration {
+  position: relative;
+  height: 292px;
+  margin: 6px -22px 10px;
+  overflow: hidden;
+}
+
+/* stage swap wipe */
+.stageWipe {
+  position: absolute;
+  z-index: 9;
+  inset: 20px -40px 20px -40px;
+  background:
+    linear-gradient(110deg,
+      transparent 0 22%,
+      color-mix(in srgb, var(--scene-c, #98ba83) 78%, #fff) 22% 62%,
+      transparent 62% 100%);
+  transform: translateX(-110%) skewX(var(--scene-angle, 5deg));
+  opacity: 0.86;
+  pointer-events: none;
+  animation: stageWipe 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* scene number watermark */
+.sceneNumber {
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  top: 2px;
+  color: color-mix(in srgb, var(--scene-a, #5d806b) 18%, transparent);
+  font-size: 112px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+  transition: color 520ms var(--hero-ease);
+  animation: sceneNumberIn 760ms var(--hero-ease) both;
+}
+
+/* current scene label pill */
+.sceneRibbon {
+  position: absolute;
+  z-index: 5;
+  top: 26px;
+  left: 22px;
+  padding: 7px 11px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--scene-ink, #234b37);
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(35, 75, 55, 0.1);
+  backdrop-filter: blur(14px);
+  transition: color 500ms var(--hero-ease);
+  animation: ribbonIn 600ms var(--hero-ease) 180ms both;
+}
+
+/* ================================================================
+   AMBIENT BLOB — rounded background behind illustration
+   ================================================================ */
+
+.ambientBlob {
+  position: absolute;
+  inset: 30px 8px 0 14px;
+  border-radius: 44px;
+  background:
+    radial-gradient(circle at 22% 36%, rgba(255, 255, 255, 0.9), transparent 24%),
+    radial-gradient(circle at 86% 16%, color-mix(in srgb, var(--scene-c, #98ba83) 42%, transparent), transparent 28%),
+    linear-gradient(135deg, rgba(255, 253, 248, 0.94), color-mix(in srgb, var(--scene-b, #dcebd4) 72%, rgba(255, 255, 255, 0.66)));
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.9);
+  transition: background 720ms var(--hero-ease);
+  animation: blobSwap 720ms var(--hero-ease) both;
+}
+
+/* ================================================================
+   SUNLIGHT — warm glow
+   ================================================================ */
+
+.sunlight {
+  position: absolute;
+  top: -20px;
+  right: 18px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(252, 236, 174, 0.8), transparent 68%);
+  filter: blur(8px);
+  transition: opacity 520ms var(--hero-ease);
+  animation: sunBreathe 7s ease-in-out infinite;
+}
+
+/* ================================================================
+   WINDOW — main scene element
+   ================================================================ */
+
+.window {
+  position: absolute;
+  top: 20px;
+  right: 0;
+  width: 262px;
+  height: 212px;
+  overflow: hidden;
+  border-radius: 34px 0 0 34px;
+  background: linear-gradient(160deg, var(--scene-sky-top, #eef6f0), var(--scene-b, #dcebd4));
+  box-shadow: -18px 20px 38px rgba(85, 106, 70, 0.12);
+  transition: background 680ms var(--hero-ease), box-shadow 680ms var(--hero-ease);
+  animation: sceneWindowSwap 760ms var(--hero-ease) both;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 70% 28%, rgba(255, 255, 255, 0.9), transparent 20%),
+    linear-gradient(180deg, var(--scene-sky-top, #eaf4f1), var(--scene-b, #dcebd4));
+  transition: background 680ms var(--hero-ease);
+}
+
+/* ================================================================
+   WEATHER LAYER — scene-specific particles
+   ================================================================ */
+
+.weatherLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: var(--weather-opacity);
+  transition: opacity 520ms var(--hero-ease);
+}
+
+.weatherLayer span {
+  position: absolute;
+  left: calc((var(--i) * 17%) - 24%);
+  top: -20px;
+  width: 2px;
+  height: calc(22px + (var(--i) % 5) * 9px);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.72);
+  transform: rotate(16deg);
+  animation: weatherFall var(--weather-speed) linear infinite;
+  animation-delay: calc(var(--i) * -0.23s);
+}
+
+/* cafe / forest: soft floating motes */
+.cafe_murmur .weatherLayer span,
+.forest_breeze .weatherLayer span {
+  width: calc(18px + (var(--i) % 4) * 5px);
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.34);
+  filter: blur(2px);
+  transform: rotate(0);
+  animation-name: moteFloat;
+}
+
+/* ocean / deep focus: horizontal wave drift */
+.ocean_low .weatherLayer span,
+.deep_focus .weatherLayer span {
+  width: 34px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.46);
+  transform: rotate(0);
+  animation-name: waveDrift;
+}
+
+/* rain: faster diagonal streaks */
+.rain_focus .weatherLayer span {
+  background: rgba(255, 255, 255, 0.68);
+  width: 1.5px;
+}
+
+/* ================================================================
+   LIGHT BEAMS
+   ================================================================ */
+
+.lightBeam,
+.lightBeamAlt {
+  position: absolute;
+  top: -20px;
+  width: 56px;
+  height: 250px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0));
+  filter: blur(1px);
+  transform: rotate(15deg);
+  animation: beamDrift 8s ease-in-out infinite;
+  transition: opacity 520ms var(--hero-ease);
+}
+
+.lightBeam {
+  left: 62px;
+}
+
+.lightBeamAlt {
+  left: 126px;
+  width: 34px;
+  opacity: 0.55;
+  animation-delay: -3s;
+}
+
+.deep_focus .lightBeam,
+.deep_focus .lightBeamAlt {
+  opacity: 0.35;
+}
+
+/* ================================================================
+   WINDOW FRAME
+   ================================================================ */
+
+.windowFrame {
+  position: absolute;
+  inset: 18px 28px 18px 48px;
+  border-left: 1px solid rgba(255, 255, 255, 0.72);
+  border-right: 1px solid rgba(255, 255, 255, 0.46);
+  pointer-events: none;
+}
+
+.windowFrame::after {
+  content: "";
+  position: absolute;
+  left: -48px;
+  right: -28px;
+  top: 48%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ================================================================
+   TREES
+   ================================================================ */
+
+.tree {
+  position: absolute;
+  bottom: -36px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.24), transparent 20%),
+    color-mix(in srgb, var(--scene-a, #5d806b) 45%, #b7ce91);
+  filter: blur(0.2px);
+  transition: background 520ms var(--hero-ease);
+  animation: floatLeaves 6s ease-in-out infinite;
+}
+
+.treeOne {
+  right: 60px;
+}
+
+.treeTwo {
+  right: -58px;
+  bottom: -14px;
+  width: 190px;
+  height: 190px;
+  background-color: color-mix(in srgb, var(--scene-a, #5d806b) 58%, #96bd82);
+  animation-delay: -1.8s;
+}
+
+.rain_focus .tree,
+.rain_focus .treeTwo {
+  border-radius: 42% 58% 46% 54%;
+  filter: saturate(0.8) blur(0.3px);
+}
+
+.ocean_low .tree,
+.ocean_low .treeTwo {
+  transform: scaleY(0.72);
+  opacity: 0.62;
+}
+
+/* ================================================================
+   CURTAIN
+   ================================================================ */
+
+.curtain {
+  position: absolute;
+  left: 6px;
+  top: 0;
+  width: 72px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.18));
+  filter: blur(0.4px);
+  animation: curtainSway 6.5s ease-in-out infinite;
+}
+
+/* ================================================================
+   DESK
+   ================================================================ */
+
+.desk {
+  position: absolute;
+  right: 0;
+  bottom: 20px;
+  width: 286px;
+  height: 56px;
+  background: linear-gradient(180deg, #d9c39c, #b99b6d);
+  border-radius: 28px 0 0 0;
+  transition: background 520ms var(--hero-ease);
+}
+
+.cafe_murmur .desk {
+  background: linear-gradient(180deg, #d7ad77, #a77943);
+}
+
+.ocean_low .desk {
+  background: linear-gradient(180deg, #b8d5d4, #78aab1);
+}
+
+.deep_focus .desk {
+  background: linear-gradient(180deg, #c3c9cd, #87919b);
+}
+
+/* ================================================================
+   SHADOW PAD
+   ================================================================ */
+
+.shadowPad {
+  position: absolute;
+  right: 34px;
+  bottom: 46px;
+  width: 186px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(89, 68, 38, 0.12);
+  filter: blur(8px);
+  transition: background 520ms var(--hero-ease);
+}
+
+/* ================================================================
+   CUP
+   ================================================================ */
+
+.cup {
+  position: absolute;
+  right: 150px;
+  bottom: 66px;
+  width: 34px;
+  height: 40px;
+  border-radius: 5px 5px 14px 14px;
+  background: linear-gradient(160deg, #fffaf0, #d8c5a0);
+  box-shadow: 10px 8px 22px rgba(95, 67, 28, 0.12);
+  transition: background 520ms var(--hero-ease);
+}
+
+.cup::after {
+  content: "";
+  position: absolute;
+  right: -12px;
+  top: 10px;
+  width: 17px;
+  height: 15px;
+  border: 4px solid #d8c5a0;
+  border-left: 0;
+  border-radius: 0 12px 12px 0;
+  transition: border-color 520ms var(--hero-ease);
+}
+
+.cafe_murmur .cup {
+  background: linear-gradient(160deg, #fff4df, #c9965b);
+}
+
+.cafe_murmur .cup::after {
+  border-color: #c9965b;
+}
+
+/* ================================================================
+   BOOK
+   ================================================================ */
+
+.book {
+  position: absolute;
+  right: 34px;
+  bottom: 68px;
+  width: 92px;
+  height: 16px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #fff, #ded8c9);
+  transform: rotate(-4deg);
+}
+
+/* ================================================================
+   STEAM
+   ================================================================ */
+
+.steam {
+  position: absolute;
+  right: 153px;
+  bottom: 110px;
+  width: 34px;
+  height: 44px;
+}
+
+.steam span {
+  position: absolute;
+  bottom: 0;
+  width: 8px;
+  height: 28px;
+  border-left: 2px solid rgba(93, 128, 107, 0.22);
+  border-radius: 50%;
+  animation: steamRise 3.8s ease-in-out infinite;
+}
+
+.steam span:nth-child(1) { left: 2px; }
+.steam span:nth-child(2) { left: 13px; animation-delay: -1.1s; }
+.steam span:nth-child(3) { left: 24px; animation-delay: -2.2s; }
+
+/* ================================================================
+   PLANT
+   ================================================================ */
+
+.plant {
+  position: absolute;
+  right: 4px;
+  bottom: 92px;
+  width: 66px;
+  height: 108px;
+}
+
+.plant b {
+  position: absolute;
+  right: 28px;
+  top: 38px;
+  width: 2px;
+  height: 72px;
+  border-radius: 99px;
+  background: rgba(67, 99, 72, 0.55);
+  transform: rotate(6deg);
+}
+
+.plant i {
+  position: absolute;
+  width: 34px;
+  height: 18px;
+  border-radius: 100% 0 100% 0;
+  background: #587d5f;
+  transform-origin: 0 100%;
+  animation: leafSway 4.8s ease-in-out infinite;
+  transition: background 520ms var(--hero-ease);
+}
+
+.plant i:nth-child(1) {
+  right: 20px;
+  top: 20px;
+  transform: rotate(-24deg);
+  --leaf-rotate: -18deg;
+}
+
+.plant i:nth-child(2) {
+  right: 4px;
+  top: 48px;
+  transform: rotate(20deg);
+  --leaf-rotate: 25deg;
+  animation-delay: -0.8s;
+}
+
+.plant i:nth-child(3) {
+  right: 24px;
+  top: 72px;
+  transform: rotate(-12deg);
+  --leaf-rotate: -8deg;
+  animation-delay: -2.1s;
+}
+
+.plant i:nth-child(4) {
+  right: 10px;
+  top: 82px;
+  transform: rotate(28deg);
+  opacity: 0.9;
+  --leaf-rotate: 32deg;
+  animation-delay: -1.5s;
+}
+
+/* ================================================================
+   NOISE / CALM LABELS
+   ================================================================ */
+
+.noiseLabel,
+.calmLabel {
+  position: absolute;
+  z-index: 2;
+  color: rgba(35, 75, 55, 0.62);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.noiseLabel {
+  left: 42px;
+  top: 72px;
+}
+
+.calmLabel {
+  right: 24px;
+  top: 86px;
+  max-width: 84px;
+  line-height: 1.3;
+}
+
+/* ================================================================
+   WAVE CARD — sound wave visualization
+   ================================================================ */
+
+.waveCard {
+  position: absolute;
+  left: 28px;
+  right: 24px;
+  top: 126px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 58px;
+  padding: 10px 12px 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 14px 34px rgba(35, 75, 55, 0.12);
+  backdrop-filter: blur(18px);
+  transition: transform 620ms var(--hero-ease), box-shadow 620ms var(--hero-ease);
+  animation: waveCardIn 760ms var(--hero-ease) 220ms both;
+}
+
+.rain_focus .waveCard {
+  transform: rotate(-2deg);
+}
+
+.cafe_murmur .waveCard {
+  transform: rotate(2deg);
+}
+
+.ocean_low .waveCard {
+  transform: translateY(8px) rotate(-1deg);
+}
+
+.deep_focus .waveCard {
+  transform: translateY(-8px) scale(0.96);
+}
+
+.noiseWave,
+.calmWave {
+  position: absolute;
+  left: -34px;
+  right: -34px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.noiseWave {
+  top: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(135, 149, 142, 0.4) 0 2px,
+    transparent 2px 8px
+  );
+  opacity: 0.8;
+  animation: noiseFlow 1.6s linear infinite;
+}
+
+.calmWave {
+  bottom: 15px;
+  background: linear-gradient(90deg, transparent, rgba(93, 128, 107, 0.4), transparent);
+  opacity: 0.8;
+  animation: calmFlow 4.8s ease-in-out infinite;
+}
+
+.waveLines {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.waveLines span {
+  width: 3px;
+  height: calc(10px + (var(--i) % 7) * 4px);
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--scene-a, #5d806b) 52%, rgba(255, 255, 255, 0.6));
+  transition: background 520ms var(--hero-ease);
+  animation: wave 1.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.08s);
+}
+
+.waveActive .waveLines span {
+  background: color-mix(in srgb, var(--scene-a, #5d806b) 78%, #234b37);
+}
+
+/* waveform orb */
+.waveOrb {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--scene-ink, #234b37);
+  box-shadow: 0 10px 24px rgba(35, 75, 55, 0.13);
+  transition: color 520ms var(--hero-ease), box-shadow 520ms var(--hero-ease);
+  animation: orbFloat 4.2s ease-in-out infinite;
+}
+
+.waveOrb svg {
+  width: 24px;
+  height: 24px;
+}
+
+.waveOrb path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ================================================================
+   ACTIONS — buttons
+   ================================================================ */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  min-height: 46px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.primaryBtn {
+  flex: 1;
+  background: linear-gradient(135deg, var(--sage-dark), var(--sage));
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(35, 75, 55, 0.22);
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease, opacity 200ms ease;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.75;
+}
+
+.primaryBtn:not(:disabled):active,
+.secondaryBtn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.secondaryBtn {
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--sage-dark);
+  transition: background 180ms ease, transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ================================================================
+   ERROR BANNER — productized
+   ================================================================ */
+
+.errorBanner {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 244, 220, 0.92);
+  color: #6b4e1a;
+  font-size: 12px;
+  line-height: 1.6;
+  animation: errorSlideIn 400ms var(--hero-ease) both;
+}
+
+.errorBannerTitle {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.errorBannerHint {
+  color: rgba(107, 78, 26, 0.72);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ================================================================
+   PRIVACY NOTE
+   ================================================================ */
+
+.privacy {
+  margin: 14px 0 0;
+  color: var(--soft);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ================================================================
+   ANALYZING STATE
+   ================================================================ */
+
+.analyzing {
+  animation: buttonBreathe 2s ease-in-out infinite;
+}
+
+/* ================================================================
+   KEYFRAMES
+   ================================================================ */
+
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+}
+
+@keyframes startupMark {
+  from { opacity: 0; transform: translateY(18px) scale(0.86); }
+}
+
+@keyframes startupBars {
+  from { transform: scaleY(0.2); opacity: 0.2; }
+}
+
+@keyframes startupExit {
+  0% { opacity: 1; clip-path: circle(140% at 50% 45%); }
+  70% { opacity: 1; }
+  100% { opacity: 0; clip-path: circle(0% at 50% 45%); }
+}
+
+@keyframes stageEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(64px, 0, 0) scale(1.08) rotate(1deg);
+    filter: blur(14px);
+  }
+}
+
+@keyframes stageWipe {
+  0% { transform: translateX(-118%) skewX(var(--scene-angle, 5deg)); }
+  45% { opacity: 0.9; }
+  100% { transform: translateX(118%) skewX(var(--scene-angle, 5deg)); opacity: 0; }
+}
+
+@keyframes sceneNumberIn {
+  from { opacity: 0; transform: translateX(36px) scale(1.1); }
+}
+
+@keyframes sceneWindowSwap {
+  from { transform: translateX(42px) scale(0.96); opacity: 0.42; }
+}
+
+@keyframes blobSwap {
+  from { transform: translateX(-28px) scale(0.98); opacity: 0.48; }
+}
+
+@keyframes ribbonIn {
+  from { opacity: 0; transform: translateX(-18px); }
+}
+
+@keyframes waveCardIn {
+  from { opacity: 0; transform: translateX(-26px) scale(0.96); }
+}
+
+@keyframes weatherFall {
+  to { transform: translate3d(72px, 250px, 0) rotate(16deg); }
+}
+
+@keyframes moteFloat {
+  50% { transform: translate3d(22px, 36px, 0) scale(1.15); }
+  100% { transform: translate3d(46px, 78px, 0); opacity: 0; }
+}
+
+@keyframes waveDrift {
+  50% { transform: translate3d(44px, 104px, 0) scaleX(1.3); }
+  100% { transform: translate3d(96px, 190px, 0); opacity: 0; }
+}
+
+@keyframes sunBreathe {
+  50% { transform: scale(1.06); opacity: 0.82; }
+}
+
+@keyframes beamDrift {
+  50% { transform: translateX(10px) rotate(13deg); opacity: 0.78; }
+}
+
+@keyframes curtainSway {
+  50% { transform: translateX(4px); opacity: 0.86; }
+}
+
+@keyframes floatLeaves {
+  50% { transform: translate3d(-4px, 3px, 0) scale(1.02); }
+}
+
+@keyframes leafSway {
+  50% { transform: rotate(var(--leaf-rotate, -16deg)) translateY(2px); }
+}
+
+@keyframes steamRise {
+  0% { transform: translateY(8px) scale(0.8); opacity: 0; }
+  45% { opacity: 0.6; }
+  100% { transform: translateY(-16px) scale(1.1); opacity: 0; }
+}
+
+@keyframes noiseFlow {
+  to { transform: translateX(16px); }
+}
+
+@keyframes calmFlow {
+  50% { transform: scaleX(0.72); opacity: 0.45; }
+}
+
+@keyframes orbFloat {
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes wave {
+  50% { transform: scaleY(0.45); opacity: 0.55; }
+}
+
+@keyframes buttonBreathe {
+  50% { box-shadow: 0 14px 36px rgba(35, 75, 55, 0.34); }
+}
+
+@keyframes errorSlideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ================================================================
+   REDUCED MOTION
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sunlight,
+  .illustration,
+  .sceneRibbon,
+  .waveCard,
+  .weatherLayer span,
+  .tree,
+  .curtain,
+  .plant i,
+  .steam span,
+  .waveLines span,
+  .noiseWave,
+  .calmWave,
+  .waveOrb,
+  .analyzing,
+  .errorBanner {
+    animation: none !important;
+  }
+}

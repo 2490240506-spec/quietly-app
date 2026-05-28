@@ -1,0 +1,427 @@
+:root {
+  --paper: #fffdf8;
+  --paper-warm: #f7f2e8;
+  --mist: #edf3ec;
+  --mist-2: #e4ece5;
+  --sage: #5d806b;
+  --sage-dark: #234b37;
+  --sage-deep: #173827;
+  --tea: #c6ad83;
+  --sky: #dcebf0;
+  --ink: #18231d;
+  --muted: #66766d;
+  --soft: #8a9a90;
+  --line: rgba(35, 75, 55, 0.12);
+  --white: rgba(255, 255, 255, 0.86);
+  --shadow: 0 18px 50px rgba(38, 64, 46, 0.12);
+  --shadow-soft: 0 8px 26px rgba(38, 64, 46, 0.08);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --app-max-width: 430px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #f0ede4;
+  color: var(--ink);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ================================================================
+   PHONE STAGE — 桌面端小程序外壳
+   ================================================================ */
+
+.phone-stage {
+  --app-bg-1: #f8f4ea;
+  --app-bg-2: #edf4ee;
+  --app-bg-3: #f6f1e8;
+  --shell-a: rgba(255, 253, 248, 0.96);
+  --shell-b: rgba(246, 250, 246, 0.96);
+  --halo-a: rgba(203, 221, 190, 0.55);
+  --halo-b: rgba(245, 232, 198, 0.5);
+  --scene-tint: rgba(93, 128, 107, 0.08);
+  --scene-glow: rgba(93, 128, 107, 0.18);
+  --scene-accent: #5d806b;
+  --scene-surface: rgba(255, 253, 248, 0.92);
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px 12px 48px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.7), transparent 56%),
+    radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--app-bg-2) 76%, transparent), transparent 34%),
+    radial-gradient(circle at 88% 20%, color-mix(in srgb, var(--app-bg-3) 66%, transparent), transparent 30%),
+    linear-gradient(170deg, var(--app-bg-1), var(--app-bg-2) 48%, var(--app-bg-3));
+  transition:
+    background 780ms var(--ease-out-expo),
+    --app-bg-1 780ms var(--ease-out-expo),
+    --app-bg-2 780ms var(--ease-out-expo),
+    --app-bg-3 780ms var(--ease-out-expo);
+}
+
+/* 声场主题 */
+.theme-rain_focus {
+  --app-bg-1: #edf5f7;
+  --app-bg-2: #dceaf0;
+  --app-bg-3: #f7f3ea;
+  --shell-a: rgba(248, 252, 252, 0.96);
+  --shell-b: rgba(232, 242, 245, 0.96);
+  --halo-a: rgba(160, 189, 202, 0.52);
+  --halo-b: rgba(225, 236, 241, 0.62);
+  --scene-tint: rgba(111, 143, 160, 0.1);
+  --scene-glow: rgba(111, 143, 160, 0.22);
+  --scene-accent: #6f8fa0;
+  --scene-surface: rgba(248, 252, 252, 0.94);
+}
+
+.theme-cafe_murmur {
+  --app-bg-1: #fbf3e6;
+  --app-bg-2: #efe0c6;
+  --app-bg-3: #f8efe5;
+  --shell-a: rgba(255, 250, 241, 0.96);
+  --shell-b: rgba(246, 236, 218, 0.96);
+  --halo-a: rgba(203, 151, 91, 0.34);
+  --halo-b: rgba(245, 224, 191, 0.66);
+  --scene-tint: rgba(139, 111, 80, 0.1);
+  --scene-glow: rgba(203, 151, 91, 0.26);
+  --scene-accent: #8b6f50;
+  --scene-surface: rgba(255, 250, 241, 0.94);
+}
+
+.theme-ocean_low {
+  --app-bg-1: #edf7f6;
+  --app-bg-2: #d7ecef;
+  --app-bg-3: #eef4ea;
+  --shell-a: rgba(247, 252, 252, 0.96);
+  --shell-b: rgba(228, 243, 244, 0.96);
+  --halo-a: rgba(123, 183, 197, 0.48);
+  --halo-b: rgba(207, 231, 235, 0.62);
+  --scene-tint: rgba(82, 124, 137, 0.1);
+  --scene-glow: rgba(123, 183, 197, 0.28);
+  --scene-accent: #527c89;
+  --scene-surface: rgba(247, 252, 252, 0.94);
+}
+
+.theme-forest_breeze {
+  --app-bg-1: #f8f4ea;
+  --app-bg-2: #edf4ee;
+  --app-bg-3: #f6f1e8;
+  --shell-a: rgba(255, 253, 248, 0.96);
+  --shell-b: rgba(246, 250, 246, 0.96);
+  --halo-a: rgba(203, 221, 190, 0.55);
+  --halo-b: rgba(245, 232, 198, 0.5);
+  --scene-tint: rgba(93, 128, 107, 0.08);
+  --scene-glow: rgba(93, 128, 107, 0.18);
+  --scene-accent: #5d806b;
+  --scene-surface: rgba(255, 253, 248, 0.92);
+}
+
+.theme-deep_focus {
+  --app-bg-1: #eef1f4;
+  --app-bg-2: #dfe5eb;
+  --app-bg-3: #f1eee8;
+  --shell-a: rgba(249, 250, 250, 0.96);
+  --shell-b: rgba(232, 237, 242, 0.96);
+  --halo-a: rgba(102, 112, 137, 0.36);
+  --halo-b: rgba(215, 221, 229, 0.64);
+  --scene-tint: rgba(83, 98, 111, 0.1);
+  --scene-glow: rgba(102, 112, 137, 0.22);
+  --scene-accent: #53626f;
+  --scene-surface: rgba(249, 250, 250, 0.94);
+}
+
+/* ================================================================
+   APP SHELL — 手机壳
+   ================================================================ */
+
+.app-shell {
+  position: relative;
+  width: min(100%, var(--app-max-width));
+  min-height: calc(100vh - 64px);
+  overflow: hidden;
+  border: 1px solid rgba(35, 75, 55, 0.14);
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, var(--shell-a), var(--shell-b)),
+    var(--paper);
+  box-shadow:
+    0 0 0 8px rgba(24, 35, 29, 0.04),
+    0 0 0 10px rgba(24, 35, 29, 0.03),
+    0 28px 80px rgba(28, 55, 39, 0.16);
+  transition:
+    background 780ms var(--ease-out-expo),
+    border-color 780ms ease,
+    box-shadow 780ms var(--ease-out-expo);
+}
+
+.app-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 86% 4%, var(--halo-a), transparent 28%),
+    radial-gradient(circle at 0% 28%, var(--halo-b), transparent 25%);
+  transition: background 780ms var(--ease-out-expo);
+}
+
+.app-main {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 32px;
+}
+
+/* ================================================================
+   FULL-PAGE STARTUP OVERLAY
+   ================================================================ */
+
+.startup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.94), transparent 36%),
+    linear-gradient(155deg, #f9f6ec, #e8f0e7);
+  pointer-events: none;
+  animation: startupExit 1200ms var(--ease-out-expo) 800ms both;
+}
+
+.startup-overlay-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  animation: startupBrandIn 700ms var(--ease-out-expo) both;
+}
+
+.startup-overlay-mark {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #234b37, #5d806b);
+  box-shadow: 0 22px 56px rgba(35, 75, 55, 0.3);
+}
+
+.startup-overlay-mark::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 30px;
+  border: 2px solid rgba(93, 128, 107, 0.3);
+  animation: startupRingPulse 1400ms var(--ease-out-expo) infinite;
+}
+
+.startup-overlay-bars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+}
+
+.startup-overlay-bars span {
+  width: 5px;
+  border-radius: 99px;
+  background: #f7fbf5;
+  animation: startupBarsPulse 800ms var(--ease-out-expo) infinite alternate;
+}
+
+.startup-overlay-bars span:nth-child(1) { height: 24px; }
+.startup-overlay-bars span:nth-child(2) { height: 38px; animation-delay: 0.15s; }
+.startup-overlay-bars span:nth-child(3) { height: 18px; animation-delay: 0.3s; }
+
+.startup-overlay-wordmark {
+  color: rgba(24, 35, 29, 0.72);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  animation: startupFadeIn 500ms var(--ease-out-expo) 300ms both;
+}
+
+@keyframes startupExit {
+  0% { opacity: 1; clip-path: circle(160% at 50% 45%); }
+  60% { opacity: 1; }
+  100% { opacity: 0; clip-path: circle(0% at 50% 45%); }
+}
+
+@keyframes startupBrandIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.92); }
+}
+
+@keyframes startupRingPulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.96); }
+  50% { opacity: 0; transform: scale(1.1); }
+}
+
+@keyframes startupBarsPulse {
+  from { transform: scaleY(0.4); opacity: 0.5; }
+  to { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes startupFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/* ================================================================
+   SCROLL REVEAL — 使用 IntersectionObserver
+   ================================================================ */
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(36px) scale(0.985);
+  filter: blur(6px);
+  transition:
+    opacity 620ms var(--ease-out-expo),
+    transform 620ms var(--ease-out-expo),
+    filter 620ms var(--ease-out-expo);
+}
+
+.scroll-reveal:first-child,
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* 错开延迟让每个模块依次进入 */
+.scroll-reveal:nth-child(2).is-visible { transition-delay: 0ms; }
+.scroll-reveal:nth-child(3).is-visible { transition-delay: 80ms; }
+.scroll-reveal:nth-child(4).is-visible { transition-delay: 140ms; }
+.scroll-reveal:nth-child(5).is-visible { transition-delay: 190ms; }
+.scroll-reveal:nth-child(6).is-visible { transition-delay: 230ms; }
+.scroll-reveal:nth-child(7).is-visible { transition-delay: 260ms; }
+
+/* ================================================================
+   RANGE INPUT
+   ================================================================ */
+
+input[type="range"] {
+  width: 100%;
+  height: 24px;
+  appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--scene-accent), color-mix(in srgb, var(--scene-accent) 40%, transparent));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  appearance: none;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: var(--scene-accent);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  transition: transform 120ms var(--ease-out-expo);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+}
+
+/* ================================================================
+   SCENE TRANSITION OVERLAY — 声场切换瞬时覆盖层
+   ================================================================ */
+
+.scene-transition-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 40%, var(--scene-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out-expo);
+}
+
+.scene-transition-flash.active {
+  opacity: 0.4;
+  transition: opacity 0ms;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 520px) {
+  .phone-stage {
+    padding: 0;
+  }
+
+  .app-shell {
+    min-height: 100vh;
+    min-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .startup-overlay {
+    border-radius: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .startup-overlay,
+  .startup-overlay-brand,
+  .startup-overlay-mark,
+  .startup-overlay-mark::before,
+  .startup-overlay-bars span,
+  .startup-overlay-wordmark,
+  .scene-transition-flash {
+    animation: none !important;
+    transition: none !important;
+  }
+}

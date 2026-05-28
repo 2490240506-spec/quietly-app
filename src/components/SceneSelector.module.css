@@ -1,0 +1,211 @@
+.section {
+  padding: 4px 22px 18px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.sectionHeader > span:last-child {
+  max-width: 136px;
+  color: var(--soft);
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: right;
+}
+
+/* restore auto button */
+.restoreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--scene-tint, rgba(93, 128, 107, 0.08));
+  color: var(--scene-accent, #5d806b);
+  font-size: 11px;
+  font-weight: 700;
+  transition: background 180ms ease, transform 120ms var(--ease-out-expo);
+}
+
+.restoreBtn:hover {
+  background: var(--scene-glow, rgba(93, 128, 107, 0.18));
+}
+
+.restoreBtn:active {
+  transform: scale(0.96);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  display: grid;
+  min-height: 138px;
+  align-content: start;
+  gap: 8px;
+  padding: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 20px;
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.86), rgba(241, 247, 240, 0.7)),
+    var(--white);
+  box-shadow: 0 10px 28px rgba(38, 64, 46, 0.08);
+  text-align: left;
+  transition: transform 220ms var(--ease-out-expo),
+              border-color 220ms ease,
+              box-shadow 220ms ease,
+              background 420ms var(--ease-out-expo);
+  animation: cardRise 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--card-index, 0) * 45ms);
+}
+
+.card:nth-child(5) {
+  grid-column: 1 / -1;
+  min-height: 108px;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  right: -24px;
+  bottom: -24px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: var(--scene-tint, rgba(93, 128, 107, 0.08));
+  transition: background 420ms var(--ease-out-expo);
+}
+
+.card:hover,
+.selected {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--scene-accent, #5d806b) 36%, transparent);
+  box-shadow: 0 14px 34px rgba(38, 64, 46, 0.13);
+}
+
+.selected {
+  background:
+    radial-gradient(circle at 92% 12%, var(--scene-glow, rgba(93, 128, 107, 0.22)), transparent 32%),
+    linear-gradient(150deg, #ffffff, var(--scene-surface, #edf5ed));
+  border-color: color-mix(in srgb, var(--scene-accent, #5d806b) 48%, transparent);
+  animation: selectedPop 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.selected::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px solid color-mix(in srgb, var(--scene-accent, #5d806b) 36%, transparent);
+  border-radius: 15px;
+  pointer-events: none;
+  animation: selectedFrame 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Card scene-color accents */
+.card[data-scene="rain_focus"].selected,
+.card[data-scene="rain_focus"]:hover {
+  --card-accent: #6f8fa0;
+}
+.card[data-scene="cafe_murmur"].selected,
+.card[data-scene="cafe_murmur"]:hover {
+  --card-accent: #8b6f50;
+}
+.card[data-scene="ocean_low"].selected,
+.card[data-scene="ocean_low"]:hover {
+  --card-accent: #527c89;
+}
+.card[data-scene="forest_breeze"].selected,
+.card[data-scene="forest_breeze"]:hover {
+  --card-accent: #5d806b;
+}
+.card[data-scene="deep_focus"].selected,
+.card[data-scene="deep_focus"]:hover {
+  --card-accent: #53626f;
+}
+
+.icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--scene-tint, rgba(93, 128, 107, 0.12));
+  color: var(--scene-accent, #234b37);
+  font-size: 20px;
+  font-weight: 700;
+  transition: background 300ms var(--ease-out-expo), color 300ms var(--ease-out-expo);
+}
+
+.selected .icon {
+  background: var(--scene-glow, rgba(93, 128, 107, 0.22));
+  color: var(--scene-accent, #234b37);
+}
+
+.name {
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.desc {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 8px;
+  border-radius: 99px;
+  background: var(--scene-accent, #234b37);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background 300ms var(--ease-out-expo);
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+}
+
+@keyframes selectedPop {
+  0% { transform: translateY(0) scale(0.98); }
+  70% { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(-2px) scale(1); }
+}
+
+@keyframes selectedFrame {
+  from { opacity: 0; transform: scale(0.92); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .selected {
+    animation: none !important;
+    transition: none !important;
+  }
+}

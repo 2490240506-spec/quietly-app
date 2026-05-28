@@ -1,0 +1,76 @@
+.header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 8px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, var(--sage-dark), var(--sage));
+  box-shadow: 0 8px 20px rgba(35, 75, 55, 0.22);
+}
+
+.logo::before,
+.logo::after,
+.logo span {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 3px;
+  border-radius: 99px;
+  background: #eef7ef;
+}
+
+.logo::before {
+  left: 8px;
+  height: 12px;
+}
+
+.logo span {
+  left: 13px;
+  height: 8px;
+  top: 10px;
+}
+
+.logo::after {
+  right: 8px;
+  height: 15px;
+  top: 6px;
+}
+
+.wordmark {
+  color: var(--sage-dark);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.menuButton {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.menuButton span {
+  display: block;
+  width: 15px;
+  height: 1.5px;
+  margin: 2px 0;
+  border-radius: 99px;
+  background: var(--sage-dark);
+}
