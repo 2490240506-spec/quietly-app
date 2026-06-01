@@ -1,15 +1,23 @@
 import type { AudioFeatures, NoiseType } from '../types/audio';
 
 export function classifyNoise(features: AudioFeatures): NoiseType {
-  const quietThreshold = 0.028;
-  const veryQuietThreshold = 0.018;
-  const stableVariance = 0.00012;
+  const quietThreshold = 0.02;
+  const veryQuietThreshold = 0.012;
+  const stableVariance = 0.0001;
 
   if (features.rms < veryQuietThreshold) {
     return 'quiet';
   }
 
-  if (features.suddenPeakDetected && features.rms > quietThreshold) {
+  if (
+    features.rms > quietThreshold * 1.25 &&
+    features.midFreqRatio > 0.3 &&
+    features.volumeVariance > 0.00016
+  ) {
+    return 'speech';
+  }
+
+  if (features.suddenPeakDetected && features.rms > quietThreshold * 1.2) {
     return 'sudden';
   }
 
@@ -17,7 +25,7 @@ export function classifyNoise(features: AudioFeatures): NoiseType {
     return 'quiet';
   }
 
-  if (features.peakCount > 18 && features.highFreqRatio > 0.24) {
+  if (features.peakCount > 14 && features.highFreqRatio > 0.23) {
     return 'typing';
   }
 
@@ -29,7 +37,7 @@ export function classifyNoise(features: AudioFeatures): NoiseType {
     return 'fan';
   }
 
-  if (features.midFreqRatio > 0.34 && features.volumeVariance > 0.00035) {
+  if (features.midFreqRatio > 0.28 && features.volumeVariance > 0.00012) {
     return 'speech';
   }
 

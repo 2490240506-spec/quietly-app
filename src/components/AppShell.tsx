@@ -12,7 +12,10 @@ import { useSoundPlayer } from '../hooks/useSoundPlayer';
 import { getRecommendedScene } from '../lib/recommendations';
 import type { SceneType } from '../types/audio';
 
-const AUTO_SCENE_COOLDOWN_MS = 12000;
+const AUTO_SCENE_COOLDOWN_MS = 30000;
+const AUTO_SCENE_CONFIRM_MS = 6500;
+const QUIET_SCENE_CONFIRM_MS = 16000;
+const SPEECH_SCENE_CONFIRM_MS = 2600;
 
 export function AppShell() {
   const analyzer = useAudioAnalyzer();
@@ -23,6 +26,8 @@ export function AppShell() {
   const [startupDone, setStartupDone] = useState(false);
   const [sceneFlashing, setSceneFlashing] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const pendingSceneRef = useRef<SceneType | null>(null);
+  const pendingSceneSinceRef = useRef(0);
 
   useEffect(() => {
     const timerId = setTimeout(() => setStartupDone(true), 2100);
@@ -75,13 +80,42 @@ export function AppShell() {
     }
 
     const now = Date.now();
-    const canAutoSwitch =
-      !player.currentScene || now - lastAutoSceneAtRef.current > AUTO_SCENE_COOLDOWN_MS;
 
-    if (canAutoSwitch && player.currentScene !== recommendedScene) {
+    if (!player.currentScene) {
       lastAutoSceneAtRef.current = now;
       triggerSceneFlash();
       player.setScene(recommendedScene);
+      pendingSceneRef.current = null;
+      pendingSceneSinceRef.current = 0;
+    } else if (player.currentScene !== recommendedScene) {
+      const currentPendingChanged = pendingSceneRef.current !== recommendedScene;
+
+      if (currentPendingChanged) {
+        pendingSceneRef.current = recommendedScene;
+        pendingSceneSinceRef.current = now;
+      }
+
+      const confirmMs =
+        analyzer.noiseType === 'quiet'
+          ? QUIET_SCENE_CONFIRM_MS
+          : analyzer.noiseType === 'speech'
+            ? SPEECH_SCENE_CONFIRM_MS
+            : AUTO_SCENE_CONFIRM_MS;
+      const pendingStableMs = now - pendingSceneSinceRef.current;
+      const cooldownPassed = now - lastAutoSceneAtRef.current > AUTO_SCENE_COOLDOWN_MS;
+      const quietIsReallyQuiet = analyzer.noiseType !== 'quiet' || analyzer.intensity <= 18;
+      const canAutoSwitch = pendingStableMs >= confirmMs && cooldownPassed && quietIsReallyQuiet;
+
+      if (canAutoSwitch) {
+        lastAutoSceneAtRef.current = now;
+        pendingSceneRef.current = null;
+        pendingSceneSinceRef.current = 0;
+        triggerSceneFlash();
+        player.setScene(recommendedScene);
+      }
+    } else {
+      pendingSceneRef.current = null;
+      pendingSceneSinceRef.current = 0;
     }
 
     if (player.status !== 'playing') {
@@ -91,6 +125,7 @@ export function AppShell() {
   }, [
     analyzer.status,
     analyzer.noiseType,
+    analyzer.intensity,
     recommendedScene,
     manualOverride,
     player.currentScene,
@@ -103,6 +138,11 @@ export function AppShell() {
   const handleManualSelect = () => {
     const element = document.querySelector('[data-section="scene-selector"]');
     element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const handleStartDetection = () => {
+    setManualOverride(false);
+    analyzer.start();
   };
 
   const handleSceneSelect = (scene: SceneType) => {
@@ -145,7 +185,7 @@ export function AppShell() {
           <section className="scroll-reveal">
             <DetectionPanel
               status={analyzer.status}
-              onStart={analyzer.start}
+              onStart={handleStartDetection}
               onManualSelect={handleManualSelect}
               error={analyzer.error}
               currentScene={player.currentScene}

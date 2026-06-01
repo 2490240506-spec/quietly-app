@@ -1,507 +1,628 @@
-/* ================================================================
-   HERO SHELL
-   ================================================================ */
 .hero {
+  --scene-accent: #5d806b;
+  --scene-accent-dark: #234b37;
+  --wave-speed: 1.7s;
   --hero-ease: cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   padding: 18px 22px 22px;
 }
 
-.heroCopy { position: relative; z-index: 2; }
+.rain_focus {
+  --scene-accent: #6f8fa0;
+  --scene-accent-dark: #365968;
+  --wave-speed: 1.15s;
+}
+
+.cafe_murmur {
+  --scene-accent: #b7864d;
+  --scene-accent-dark: #674620;
+  --wave-speed: 2s;
+}
+
+.ocean_low {
+  --scene-accent: #527c89;
+  --scene-accent-dark: #245764;
+  --wave-speed: 2.8s;
+}
+
+.forest_breeze {
+  --scene-accent: #5d806b;
+  --scene-accent-dark: #234b37;
+  --wave-speed: 2.4s;
+}
+
+.deep_focus {
+  --scene-accent: #637083;
+  --scene-accent-dark: #303b4c;
+  --wave-speed: 3.2s;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 2;
+}
 
 .kicker {
   margin: 0 0 10px;
-  color: var(--scene-accent, #5d806b);
-  font-size: 12px; font-weight: 700;
-  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--scene-accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 520ms var(--hero-ease);
 }
 
 .headline {
-  max-width: 330px; margin: 0;
+  max-width: 330px;
+  margin: 0;
   color: var(--ink);
-  font-size: 36px; font-weight: 800;
-  letter-spacing: 0; line-height: 1.14;
+  font-size: 36px;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1.14;
 }
-.headline span { display: block; color: var(--scene-accent, #5d806b); }
+
+.headline span {
+  display: block;
+  color: var(--scene-accent);
+  transition: color 520ms var(--hero-ease);
+}
 
 .subhead {
-  max-width: 320px; margin: 16px 0 0;
-  color: var(--muted); font-size: 14px; line-height: 1.8;
+  max-width: 320px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
 }
 
-/* illustration wrapper */
-.illustration {
+.sceneStage {
   position: relative;
-  height: 310px;
-  margin: 8px -22px 10px;
+  height: 318px;
+  margin: 12px -22px 12px;
   overflow: hidden;
-  border-radius: 0 0 24px 24px;
+  border-radius: 0 0 28px 28px;
+  background: color-mix(in srgb, var(--scene-accent) 28%, #f8fbf8);
+  box-shadow: inset 0 -18px 45px rgba(20, 45, 32, 0.16);
+  animation: stageEnter 760ms var(--hero-ease) both;
+  isolation: isolate;
+}
+
+.sceneImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.055);
+  filter: saturate(0.92) contrast(0.96);
+  animation: imageDrift 13s ease-in-out infinite alternate;
+}
+
+.sceneShade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 42%, rgba(13, 36, 25, 0.22)),
+    radial-gradient(circle at 72% 28%, color-mix(in srgb, var(--scene-accent) 28%, transparent), transparent 32%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
 
 .stageWipe {
-  position: absolute; z-index: 9;
-  inset: 0;
-  background: rgba(255,255,255,0.72);
-  transform: translateX(-100%);
+  position: absolute;
+  z-index: 20;
+  inset: 0 -40px;
+  background:
+    linear-gradient(105deg, transparent 0 22%, rgba(255, 255, 255, 0.86) 22% 58%, transparent 58% 100%);
+  transform: translateX(-110%) skewX(-10deg);
   pointer-events: none;
-  animation: stageWipeX 800ms var(--hero-ease) both;
-}
-@keyframes stageWipeX {
-  0% { transform: translateX(-100%); }
-  40% { transform: translateX(0); }
-  100% { transform: translateX(110%); }
+  animation: stageWipe 820ms var(--hero-ease) both;
 }
 
-/* shared wave card */
+.sceneLabel {
+  position: absolute;
+  z-index: 6;
+  top: 22px;
+  left: 24px;
+  display: grid;
+  gap: 3px;
+  max-width: 230px;
+  padding: 7px 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--scene-accent-dark) 72%, transparent);
+  color: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 24px rgba(16, 34, 24, 0.18);
+  backdrop-filter: blur(10px);
+  animation: labelIn 520ms var(--hero-ease) 180ms both;
+}
+
+.sceneLabel strong {
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.sceneLabel span {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.curtainLeft,
+.curtainRight {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  width: 82px;
+  height: 100%;
+  pointer-events: none;
+  filter: blur(0.2px);
+  opacity: 0.62;
+}
+
+.curtainLeft {
+  left: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.1));
+  transform-origin: 0 0;
+  animation: curtainLeft 5.8s ease-in-out infinite;
+}
+
+.curtainRight {
+  right: 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.06));
+  transform-origin: 100% 0;
+  animation: curtainRight 6.2s ease-in-out infinite;
+}
+
+.lightSweep {
+  position: absolute;
+  z-index: 5;
+  top: -40px;
+  left: 18%;
+  width: 76px;
+  height: 420px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
+  transform: rotate(14deg);
+  filter: blur(1px);
+  animation: lightSweep 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.particles {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particles span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  animation-delay: var(--delay);
+}
+
+.rain_focusParticles span {
+  width: 1px;
+  height: var(--len);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0),
+    rgba(232, 246, 255, var(--alpha)),
+    rgba(232, 246, 255, 0)
+  );
+  box-shadow: 0 0 5px rgba(210, 235, 245, 0.16);
+  transform: rotate(8deg);
+  animation: rainSlide var(--dur) linear infinite;
+}
+
+.rain_focusParticles span:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(236, 248, 255, 0.24);
+  box-shadow: 0 0 8px rgba(236, 248, 255, 0.2);
+  animation-name: rainBead;
+}
+
+.rain_focusParticles span:nth-child(4n) {
+  height: calc(var(--len) * 1.8);
+  opacity: 0.55;
+  animation-duration: calc(var(--dur) * 1.25);
+}
+
+.cafe_murmurParticles span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 229, 186, 0.36);
+  filter: blur(2px);
+  animation: warmMote 4.6s ease-in-out infinite;
+}
+
+.cafe_murmurParticles span:nth-child(1),
+.cafe_murmurParticles span:nth-child(2),
+.cafe_murmurParticles span:nth-child(3) {
+  width: 14px;
+  height: 42px;
+  border-left: 2px solid rgba(255, 236, 205, 0.42);
+  border-radius: 50%;
+  background: transparent;
+  filter: blur(0.4px);
+  animation: steamRise 3.6s ease-in-out infinite;
+}
+
+.ocean_lowParticles span {
+  width: 76px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(226, 250, 255, 0.62), transparent);
+  animation: oceanDrift 5.8s ease-in-out infinite;
+}
+
+.forest_breezeParticles span {
+  width: 13px;
+  height: 8px;
+  border-radius: 100% 0 100% 0;
+  background: rgba(214, 236, 195, 0.72);
+  animation: leafFloat 5.2s ease-in-out infinite;
+}
+
+.deep_focusParticles span {
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(225, 236, 246, 0.68);
+  box-shadow: 0 0 12px rgba(225, 236, 246, 0.5);
+  animation: starPulse 4.8s ease-in-out infinite;
+}
+
 .waveCard {
-  position: absolute; left: 24px; right: 24px; bottom: 16px;
-  display: flex; align-items: center; gap: 12px;
-  height: 52px; padding: 8px 12px 8px 16px;
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 99px;
-  background: rgba(255,255,255,0.55);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.1);
-  backdrop-filter: blur(14px);
-  z-index: 3;
-  transition: background 400ms ease, box-shadow 400ms ease;
+  position: absolute;
+  z-index: 8;
+  left: 26px;
+  right: 26px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 9px 12px 9px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.56);
+  box-shadow: 0 16px 34px rgba(20, 42, 31, 0.18);
+  backdrop-filter: blur(16px);
+  animation: waveEnter 680ms var(--hero-ease) 280ms both;
 }
+
+.waveNoise {
+  position: absolute;
+  left: 18px;
+  right: 68px;
+  top: 13px;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--scene-accent-dark) 48%, transparent) 0 2px,
+    transparent 2px 8px
+  );
+  opacity: 0.58;
+  animation: noiseMove 1.6s linear infinite;
+}
+
 .waveLines {
-  display: flex; flex: 1; align-items: center; justify-content: center; gap: 3px;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
+
 .waveLines span {
-  width: 2.5px; border-radius: 99px;
-  height: calc(8px + (var(--i) % 7) * 3px);
-  background: rgba(255,255,255,0.8);
-  animation: waveBounce 1.6s ease-in-out infinite;
-  animation-delay: calc(var(--i) * -0.08s);
+  width: 3px;
+  height: calc(10px + (var(--i) % 8) * 4px);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--scene-accent-dark) 62%, rgba(255, 255, 255, 0.65));
+  animation: waveBounce var(--wave-speed) ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.07s);
 }
-.waveActive .waveLines span { background: rgba(255,255,255,0.95); }
+
+.waveActive .waveLines span {
+  background: color-mix(in srgb, var(--scene-accent-dark) 86%, #fff);
+}
+
 .waveOrb {
-  display: grid; width: 38px; height: 38px;
-  place-items: center; border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--scene-accent-dark);
+  box-shadow: 0 8px 18px rgba(20, 42, 31, 0.14);
+  animation: orbFloat 4.2s ease-in-out infinite;
 }
-.waveOrb svg { width: 20px; height: 20px; }
-.waveOrb path { fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+.waveOrb svg {
+  width: 22px;
+  height: 22px;
+}
+
+.waveOrb path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  min-height: 46px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.primaryBtn {
+  flex: 1;
+  background: linear-gradient(135deg, var(--scene-accent-dark), var(--scene-accent));
+  color: #fff;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--scene-accent-dark) 26%, transparent);
+  transition: transform 180ms var(--hero-ease), box-shadow 180ms ease, background 520ms ease;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.75;
+}
+
+.primaryBtn:not(:disabled):active,
+.secondaryBtn:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.secondaryBtn {
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.64);
+  color: var(--scene-accent-dark);
+  transition: color 520ms ease, transform 180ms var(--hero-ease);
+}
+
+.analyzing {
+  animation: buttonBreathe 2s ease-in-out infinite;
+}
+
+.errorBanner {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 244, 220, 0.92);
+  color: #6b4e1a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.errorBannerTitle {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.errorBannerHint {
+  color: rgba(107, 78, 26, 0.72);
+  font-size: 11px;
+}
+
+.privacy {
+  margin: 14px 0 0;
+  color: var(--soft);
+  font-size: 12px;
+  text-align: center;
+}
+
+@keyframes stageEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(46px, 8px, 0) scale(1.04);
+    filter: blur(12px);
+  }
+}
+
+@keyframes imageDrift {
+  from {
+    transform: scale(1.055) translate3d(-6px, 0, 0);
+  }
+  to {
+    transform: scale(1.105) translate3d(8px, -5px, 0);
+  }
+}
+
+@keyframes stageWipe {
+  0% {
+    transform: translateX(-112%) skewX(-10deg);
+  }
+  45% {
+    opacity: 0.86;
+  }
+  100% {
+    transform: translateX(116%) skewX(-10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes labelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes curtainLeft {
+  50% {
+    transform: translateX(8px) skewX(-2deg);
+    opacity: 0.74;
+  }
+}
+
+@keyframes curtainRight {
+  50% {
+    transform: translateX(-6px) skewX(2deg);
+    opacity: 0.72;
+  }
+}
+
+@keyframes lightSweep {
+  50% {
+    transform: translateX(24px) rotate(12deg);
+    opacity: 0.72;
+  }
+}
+
+@keyframes rainSlide {
+  from {
+    transform: translate3d(-8px, -46px, 0) rotate(8deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0.72;
+  }
+  to {
+    transform: translate3d(12px, 240px, 0) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rainBead {
+  from {
+    transform: translate3d(0, -20px, 0) scale(0.82);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.75;
+  }
+  68% {
+    opacity: 0.5;
+  }
+  to {
+    transform: translate3d(4px, 120px, 0) scale(1.05);
+    opacity: 0;
+  }
+}
+
+@keyframes warmMote {
+  50% {
+    transform: translate3d(16px, -24px, 0) scale(1.25);
+    opacity: 0.72;
+  }
+}
+
+@keyframes steamRise {
+  0% {
+    transform: translate3d(0, 20px, 0) scale(0.74);
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.72;
+  }
+  100% {
+    transform: translate3d(8px, -48px, 0) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes oceanDrift {
+  50% {
+    transform: translate3d(52px, 18px, 0) scaleX(1.35);
+    opacity: 0.72;
+  }
+  100% {
+    transform: translate3d(112px, 36px, 0) scaleX(0.82);
+    opacity: 0;
+  }
+}
+
+@keyframes leafFloat {
+  0% {
+    transform: translate3d(0, 14px, 0) rotate(0deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.78;
+  }
+  100% {
+    transform: translate3d(-42px, -62px, 0) rotate(120deg);
+    opacity: 0;
+  }
+}
+
+@keyframes starPulse {
+  50% {
+    transform: scale(1.8);
+    opacity: 0.28;
+  }
+}
+
+@keyframes waveEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.96);
+  }
+}
 
 @keyframes waveBounce {
-  50% { transform: scaleY(0.4); opacity: 0.5; }
+  50% {
+    transform: scaleY(0.42);
+    opacity: 0.56;
+  }
 }
 
-/* actions */
-.actions { display:flex; align-items:center; gap:12px; margin-top: 2px; }
-.primaryBtn, .secondaryBtn { min-height:46px; border-radius:99px; font-size:14px; font-weight:700; }
-.primaryBtn {
-  flex:1;
-  background: linear-gradient(135deg, var(--sage-dark), var(--sage));
-  color:#fff;
-  box-shadow:0 12px 24px rgba(35,75,55,0.22);
-  transition: transform 180ms cubic-bezier(0.22,1,0.36,1), box-shadow 180ms ease;
-}
-.primaryBtn:disabled { opacity:0.75; }
-.primaryBtn:not(:disabled):active { transform:translateY(1px) scale(0.99); }
-.secondaryBtn {
-  padding:0 18px; border:1px solid var(--line);
-  background:rgba(255,255,255,0.62); color:var(--sage-dark);
-}
-.analyzing { animation: buttonBreathe 2s ease-in-out infinite; }
-@keyframes buttonBreathe { 50% { box-shadow:0 14px 36px rgba(35,75,55,0.34); } }
-
-/* error */
-.errorBanner {
-  display:grid; gap:10px; margin-top:14px; padding:14px 16px;
-  border-radius:var(--radius-md); background:rgba(255,244,220,0.92);
-  color:#6b4e1a; font-size:12px; line-height:1.6;
-}
-.errorBannerTitle { font-weight:800; font-size:13px; }
-.errorBannerHint { color:rgba(107,78,26,0.72); font-size:11px; }
-.privacy { margin:14px 0 0; color:var(--soft); font-size:12px; text-align:center; }
-
-/* ================================================================
-   RAIN FOCUS SCENE
-   ================================================================ */
-.rainScene {
-  position: absolute; inset: 0;
-  background: linear-gradient(170deg, #3a4f5a, #4a6170, #556e7b);
-  overflow: hidden;
-  animation: sceneFadeIn 700ms var(--hero-ease) both;
-}
-.rainWindow {
-  position: absolute; inset: 12px 10px 60px 10px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
-}
-.rainSky {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #5a7a8c, #6d8fa0, #7a9aab);
-}
-.rainDrop {
-  position: absolute;
-  left: calc(var(--rx) * 1%);
-  top: calc(var(--ry) * 1px);
-  width: 1.5px; height: 18px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 0 0 50% 50%;
-  animation: rainFall 0.8s linear infinite;
-  animation-delay: calc(var(--rd) * 1s);
-  transform: scaleY(var(--rs));
-}
-@keyframes rainFall {
-  0% { transform: translateY(-20px) scaleY(var(--rs)); opacity: 0; }
-  10% { opacity: 0.7; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(260px) scaleY(var(--rs)); opacity: 0; }
-}
-.rainFog {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(90,122,140,0.3), transparent 30%, transparent 70%, rgba(80,110,125,0.35));
-}
-.rainWindowFrame {
-  position: absolute; inset: 0;
-  border: 8px solid rgba(40,55,65,0.4);
-  border-radius: 20px;
-}
-.rainPuddle {
-  position: absolute; bottom: 48px; left: 0; right: 0; height: 30px;
-  background: linear-gradient(180deg, rgba(100,140,160,0.4), rgba(80,120,140,0.2));
-  overflow: hidden;
-}
-.rainPuddle span {
-  position: absolute; top: 0; left: calc(var(--ri) * 22%);
-  width: 40px; height: 1.5px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 50%;
-  animation: puddleRipple 2s ease-in-out infinite;
-  animation-delay: calc(var(--ri) * 0.5s);
-}
-@keyframes puddleRipple {
-  0%, 100% { transform: scaleX(0.5); opacity: 0; }
-  50% { transform: scaleX(1.5); opacity: 0.5; }
-}
-.rainDesk {
-  position: absolute; bottom: 16px; right: 0;
-  width: 70%; height: 36px;
-  background: linear-gradient(180deg, #4a535c, #3a424a);
-  border-radius: 14px 0 0 0;
-}
-.rainMug {
-  position: absolute; bottom: 42px; right: 80px;
-  width: 28px; height: 34px;
-  border-radius: 4px 4px 10px 10px;
-  background: linear-gradient(160deg, #66727a, #4a545c);
-  box-shadow: 6px 4px 14px rgba(0,0,0,0.15);
-}
-.rainSceneLabel {
-  position: absolute; top: 22px; left: 22px; z-index: 4;
-  padding: 6px 10px; border-radius: 99px;
-  background: rgba(0,0,0,0.3); backdrop-filter: blur(8px);
-  color: #d0dfe8; font-size: 12px; font-weight: 800;
-  animation: labelIn 500ms var(--hero-ease) 200ms both;
+@keyframes noiseMove {
+  to {
+    transform: translateX(16px);
+  }
 }
 
-/* ================================================================
-   CAFE SCENE
-   ================================================================ */
-.cafeScene {
-  position: absolute; inset: 0;
-  background: linear-gradient(160deg, #6b4e3a, #8b6a4a, #a07850);
-  overflow: hidden;
-  animation: sceneFadeIn 700ms var(--hero-ease) both;
-}
-.cafeInterior {
-  position: absolute; inset: 12px 10px 60px 10px;
-  border-radius: 20px; overflow: hidden;
-}
-.cafeWall {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #c9a87c, #b8956e, #a88462);
-}
-.cafeLamp {
-  position: absolute; top: 0; left: 50%;
-  width: 60px; height: 30px;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse at 50% 0%, #f5d89a, #d4a85c);
-  border-radius: 50% 50% 0 0;
-}
-.cafeLight {
-  position: absolute; top: 20px; left: 50%;
-  width: 180px; height: 180px;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse, rgba(245,216,154,0.3), transparent 60%);
-}
-.cafeMote {
-  position: absolute;
-  left: calc(var(--mx) * 1%);
-  top: calc(var(--my) * 1%);
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,240,210,0.4);
-  filter: blur(1px);
-  animation: moteFloat 4s ease-in-out infinite;
-  animation-delay: calc(var(--md) * 1s);
-}
-@keyframes moteFloat {
-  0%, 100% { transform: translate(0,0); opacity: 0.2; }
-  50% { transform: translate(10px,-20px); opacity: 0.6; }
-}
-.cafeTable {
-  position: absolute; bottom: 16px; right: 0;
-  width: 72%; height: 40px;
-  background: linear-gradient(180deg, #8b6844, #6b4a30);
-  border-radius: 16px 0 0 0;
-}
-.cafeCup {
-  position: absolute; bottom: 46px; right: 90px;
-  width: 32px; height: 38px;
-  border-radius: 6px 6px 14px 14px;
-  background: linear-gradient(160deg, #f5e6d0, #d4b896);
-  box-shadow: 8px 6px 16px rgba(0,0,0,0.12);
-}
-.cafeSteam {
-  position: absolute; bottom: 38px; right: 92px; width: 28px; height: 30px;
-}
-.cafeSteam span {
-  position: absolute; bottom: 0; width: 6px; height: 22px;
-  border-left: 2px solid rgba(200,170,130,0.25); border-radius: 50%;
-  animation: steamUp 3s ease-in-out infinite;
-}
-.cafeSteam span:nth-child(1) { left: 2px; }
-.cafeSteam span:nth-child(2) { left: 11px; animation-delay: -1s; }
-.cafeSteam span:nth-child(3) { left: 20px; animation-delay: -2s; }
-@keyframes steamUp {
-  0% { transform: translateY(4px) scale(0.7); opacity: 0; }
-  40% { opacity: 0.5; }
-  100% { transform: translateY(-20px) scale(1.2); opacity: 0; }
-}
-.cafeBook {
-  position: absolute; bottom: 48px; right: 40px;
-  width: 80px; height: 12px; border-radius: 3px;
-  background: linear-gradient(180deg, #f8f0e4, #e0d0ba);
-  transform: rotate(-3deg);
-}
-.cafeSceneLabel {
-  position: absolute; top: 22px; left: 22px; z-index: 4;
-  padding: 6px 10px; border-radius: 99px;
-  background: rgba(80,40,20,0.35); backdrop-filter: blur(8px);
-  color: #f5e0c0; font-size: 12px; font-weight: 800;
-  animation: labelIn 500ms var(--hero-ease) 200ms both;
+@keyframes orbFloat {
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
-/* ================================================================
-   OCEAN SCENE
-   ================================================================ */
-.oceanScene {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #6aafc4, #4a8fa0, #3a7a90);
-  overflow: hidden;
-  animation: sceneFadeIn 700ms var(--hero-ease) both;
-}
-.oceanView {
-  position: absolute; inset: 0;
-}
-.oceanSky {
-  position: absolute; top: 0; left: 0; right: 0; height: 50%;
-  background: linear-gradient(180deg, #8cc8d8, #b8dde8, #d4ecf4);
-}
-.oceanHorizon {
-  position: absolute; top: 48%; left: 0; right: 0; height: 4px;
-  background: rgba(255,255,255,0.3);
-  filter: blur(2px);
-}
-.oceanWaveBack, .oceanWaveMid, .oceanWaveFront {
-  position: absolute; left: 0; right: 0; height: 50px;
-  background: linear-gradient(180deg, rgba(60,140,170,0.6), rgba(40,110,140,0.8));
-  border-radius: 50%;
-  animation: oceanSwell 5s ease-in-out infinite;
-}
-.oceanWaveBack { top: 50%; animation-delay: 0s; opacity: 0.5; }
-.oceanWaveMid { top: 56%; animation-delay: -1.5s; opacity: 0.7; }
-.oceanWaveFront { top: 62%; animation-delay: -3s; opacity: 0.9; background: rgba(20,80,110,0.8); }
-@keyframes oceanSwell {
-  0%, 100% { transform: translateY(0) scaleX(1); }
-  50% { transform: translateY(-6px) scaleX(1.04); }
-}
-.oceanShimmer {
-  position: absolute;
-  left: calc(var(--sx) * 1%);
-  top: calc(var(--sy) * 1%);
-  width: 30px; height: 2px;
-  background: rgba(255,255,255,0.5);
-  border-radius: 50%;
-  animation: shimmerFlash 2.5s ease-in-out infinite;
-  animation-delay: calc(var(--sd) * 1s);
-}
-@keyframes shimmerFlash {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 0.7; }
-}
-.oceanSceneLabel {
-  position: absolute; top: 22px; left: 22px; z-index: 4;
-  padding: 6px 10px; border-radius: 99px;
-  background: rgba(20,60,80,0.3); backdrop-filter: blur(8px);
-  color: #d4f0f8; font-size: 12px; font-weight: 800;
-  animation: labelIn 500ms var(--hero-ease) 200ms both;
+@keyframes buttonBreathe {
+  50% {
+    box-shadow: 0 16px 34px color-mix(in srgb, var(--scene-accent-dark) 36%, transparent);
+  }
 }
 
-/* ================================================================
-   FOREST SCENE
-   ================================================================ */
-.forestScene {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, #6b8f6a, #7fa87e, #8db88b);
-  overflow: hidden;
-  animation: sceneFadeIn 700ms var(--hero-ease) both;
-}
-.forestGlade {
-  position: absolute; inset: 0;
-}
-.forestSky {
-  position: absolute; top: 0; left: 0; right: 0; height: 55%;
-  background: linear-gradient(180deg, #b8dcc0, #cee8d0, #e8f4e4);
-}
-.forestSun {
-  position: absolute; top: 16px; right: 30px;
-  width: 60px; height: 60px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,248,200,0.8), rgba(255,240,180,0.2) 50%, transparent);
-  filter: blur(4px);
-  animation: sunPulse 5s ease-in-out infinite;
-}
-@keyframes sunPulse {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.08); opacity: 0.9; }
-}
-.forestTree {
-  position: absolute; bottom: 0;
-}
-.forestTreeLeft { left: 10px; width: 100px; height: 180px; }
-.forestTreeRight { right: 5px; width: 110px; height: 200px; }
-.forestTrunk {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 12px; height: 50%;
-  background: linear-gradient(180deg, #6b8a60, #4a6040);
-  border-radius: 2px;
-}
-.forestCanopy {
-  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-  width: 100%; height: 65%;
-  background: radial-gradient(ellipse at 50% 80%, #5a8a50, #3a6a30);
-  border-radius: 50% 50% 0 0;
-}
-.forestTreeRight .forestCanopy {
-  background: radial-gradient(ellipse at 50% 80%, #6b9a60, #4a7a40);
-}
-.forestLeaf {
-  position: absolute;
-  left: calc(var(--lx) * 1%);
-  top: calc(var(--ly) * 1%);
-  width: 10px; height: 6px;
-  background: rgba(200,230,180,0.7);
-  border-radius: 50% 0 50% 0;
-  animation: leafDrift 5s ease-in-out infinite;
-  animation-delay: calc(var(--ld) * 1s);
-}
-@keyframes leafDrift {
-  0% { transform: translate(0,0) rotate(0deg); opacity: 0; }
-  30% { opacity: 0.7; }
-  100% { transform: translate(-20px,-50px) rotate(120deg); opacity: 0; }
-}
-.forestGround {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
-  background: linear-gradient(180deg, #5a7a50, #3a5a30);
-}
-.forestSceneLabel {
-  position: absolute; top: 22px; left: 22px; z-index: 4;
-  padding: 6px 10px; border-radius: 99px;
-  background: rgba(30,60,30,0.3); backdrop-filter: blur(8px);
-  color: #d8f0d0; font-size: 12px; font-weight: 800;
-  animation: labelIn 500ms var(--hero-ease) 200ms both;
-}
-
-/* ================================================================
-   DEEP FOCUS SCENE
-   ================================================================ */
-.deepScene {
-  position: absolute; inset: 0;
-  background: linear-gradient(170deg, #2a3340, #354050, #404d60);
-  overflow: hidden;
-  animation: sceneFadeIn 700ms var(--hero-ease) both;
-}
-.deepRoom {
-  position: absolute; inset: 0;
-}
-.deepWall {
-  position: absolute; inset: 0;
-  background: linear-gradient(170deg, #2d3846, #384456, #425068);
-}
-.deepGlow {
-  position: absolute; top: 30%; left: 50%;
-  width: 160px; height: 160px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(130,150,180,0.3), transparent 60%);
-  animation: deepGlowPulse 4s ease-in-out infinite;
-}
-@keyframes deepGlowPulse {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
-}
-.deepRing1, .deepRing2 {
-  position: absolute; top: 30%; left: 50%;
-  border-radius: 50%;
-  border: 1px solid rgba(180,200,220,0.2);
-  animation: ringExpand 3s ease-out infinite;
-}
-.deepRing1 { width: 60px; height: 60px; margin-left: -30px; margin-top: -30px; animation-delay: 0s; }
-.deepRing2 { width: 60px; height: 60px; margin-left: -30px; margin-top: -30px; animation-delay: -1.5s; }
-@keyframes ringExpand {
-  0% { transform: scale(1); opacity: 0.4; }
-  100% { transform: scale(4); opacity: 0; }
-}
-.deepDesk {
-  position: absolute; bottom: 16px; right: 0;
-  width: 68%; height: 38px;
-  background: linear-gradient(180deg, #38424e, #2a323c);
-  border-radius: 12px 0 0 0;
-}
-.deepLamp {
-  position: absolute; top: 14px; right: 44px;
-  width: 4px; height: 50px;
-  background: #3a4450;
-}
-.deepLamp::after {
-  content: "";
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 28px; height: 6px;
-  background: #3a4450;
-  border-radius: 3px;
-}
-.deepSceneLabel {
-  position: absolute; top: 22px; left: 22px; z-index: 4;
-  padding: 6px 10px; border-radius: 99px;
-  background: rgba(20,25,35,0.4); backdrop-filter: blur(8px);
-  color: #c0d0e0; font-size: 12px; font-weight: 800;
-  animation: labelIn 500ms var(--hero-ease) 200ms both;
-}
-
-/* ================================================================
-   SHARED KEYFRAMES
-   ================================================================ */
-@keyframes sceneFadeIn {
-  from { opacity: 0; transform: scale(1.03); filter: blur(8px); }
-}
-@keyframes labelIn {
-  from { opacity: 0; transform: translateY(-8px); }
-}
-
-/* ================================================================
-   REDUCED MOTION
-   ================================================================ */
 @media (prefers-reduced-motion: reduce) {
-  .rainDrop, .rainPuddle span, .cafeMote, .cafeSteam span,
-  .oceanWaveBack, .oceanWaveMid, .oceanWaveFront, .oceanShimmer,
-  .forestLeaf, .deepGlow, .deepRing1, .deepRing2,
-  .waveLines span {
+  .sceneStage,
+  .sceneImage,
+  .stageWipe,
+  .sceneLabel,
+  .curtainLeft,
+  .curtainRight,
+  .lightSweep,
+  .particles span,
+  .waveCard,
+  .waveLines span,
+  .waveNoise,
+  .waveOrb,
+  .analyzing {
     animation: none !important;
   }
 }

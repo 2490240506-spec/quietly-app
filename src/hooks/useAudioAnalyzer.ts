@@ -3,13 +3,13 @@ import type { AnalyzerStatus, NoiseType } from '../types/audio';
 import { extractFeatures } from '../lib/audioFeatures';
 import { calculateIntensity, classifyNoise } from '../lib/classifyNoise';
 
-const ANALYSIS_INTERVAL_MS = 420;
-const STABILITY_WINDOW = 8;
-const MIN_TYPE_HOLD_MS = 4500;
-const INTENSITY_SMOOTHING = 0.22;
+const ANALYSIS_INTERVAL_MS = 260;
+const STABILITY_WINDOW = 5;
+const MIN_TYPE_HOLD_MS = 1800;
+const INTENSITY_SMOOTHING = 0.34;
 
 function chooseStableType(samples: NoiseType[], fallback: NoiseType | null): NoiseType | null {
-  if (samples.length < Math.ceil(STABILITY_WINDOW * 0.6)) return fallback;
+  if (samples.length < 3) return fallback;
 
   const counts = samples.reduce<Record<NoiseType, number>>(
     (acc, item) => {
@@ -31,7 +31,8 @@ function chooseStableType(samples: NoiseType[], fallback: NoiseType | null): Noi
   const [candidate, votes] = sorted[0];
   const secondVotes = sorted[1]?.[1] ?? 0;
 
-  if (votes >= 5 || votes - secondVotes >= 3) return candidate;
+  if (candidate === 'speech' && votes >= 2) return candidate;
+  if (votes >= 3 || votes - secondVotes >= 2) return candidate;
   return fallback;
 }
 

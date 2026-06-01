@@ -1,73 +1,92 @@
-# React + TypeScript + Vite
+# Quietly
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Quietly is a mobile-first AI sound masking prototype for focus scenes such as offices, libraries, study rooms, shared workspaces, and dorm rooms.
 
-Currently, two official plugins are available:
+It analyzes ambient sound locally in the browser, roughly identifies the dominant noise type, recommends a matching masking scene, and plays a soothing soundscape to reduce perceived distraction.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Demo Focus
 
-## React Compiler
+- Local microphone analysis with Web Audio API
+- Coarse noise classification: quiet, speech, typing, fan, traffic, sudden, unknown
+- Automatic scene recommendation with anti-flicker switching logic
+- Five masking scenes with illustrations, motion overlays, and audio
+- Mobile mini-program style UI, suitable for later WeChat mini program migration
+- Privacy-first copy: local analysis only, no recording, no upload
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Scenes
 
-## Expanding the ESLint configuration
+| Scene | File | Use case |
+|---|---|---|
+| Rain Focus | `rain-focus.mp3` | Speech, keyboard, page turning |
+| Cafe Murmur | `cafe-murmur.mp3` | Soft background masking for conversations |
+| Ocean Low | `ocean-low.mp3` | Traffic, air conditioner, low-frequency hum |
+| Forest Breeze | `forest-breeze.mp3` | Quiet environments and gentle focus |
+| Deep Focus | `deep-focus.mp3` | Long study or writing sessions |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React
+- TypeScript
+- Vite
+- Web Audio API
+- CSS Modules
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Local Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+http://127.0.0.1:5173
 ```
+
+For microphone testing, use Chrome or Edge. Some embedded preview browsers cannot request system microphone permission.
+
+## Build
+
+```bash
+npm run build
+```
+
+Production files are generated in:
+
+```text
+dist/
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## Privacy Note
+
+Quietly only analyzes audio features locally in the browser, such as volume, frequency distribution, and fluctuation. The prototype does not record, store, or upload audio.
+
+## Current Limitations
+
+- The noise classifier is rule-based, not a trained deep learning model.
+- Detection is coarse and optimized for demo scenarios.
+- Browser microphone permission requires a secure context and supported browser.
+- A future WeChat mini program version should replace browser APIs with WeChat recording and audio APIs.
+
+## Competition Materials
+
+Recommended competition submission package:
+
+- Online demo URL
+- GitHub repository URL
+- Product description document
+- Short demo video
+- Screenshots
+- Source code package
+
+See:
+
+- `Quietly-Product-Brief.md`
+- `Competition-Submission-Guide.md`

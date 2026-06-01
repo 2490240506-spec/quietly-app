@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { AnalyzerStatus, SceneType } from '../types/audio';
+import { assetPath } from '../lib/assetPath';
 import styles from './DetectionPanel.module.css';
 
 interface Props {
@@ -10,200 +11,84 @@ interface Props {
   currentScene: SceneType | null;
 }
 
-/* ================================================================
-   SCENE-SPECIFIC ILLUSTRATION RENDERERS
-   ================================================================ */
+const sceneMeta: Record<SceneType, { label: string; description: string; image: string }> = {
+  rain_focus: {
+    label: '\u96e8\u58f0\u4e13\u6ce8',
+    description: '\u7ec6\u5bc6\u96e8\u58f0\u9002\u5408\u63a9\u853d\u4f4e\u8bed\u3001\u952e\u76d8\u548c\u7ffb\u4e66\u58f0\u3002',
+    image: assetPath('/scenes/rain-focus.png'),
+  },
+  cafe_murmur: {
+    label: '\u5496\u5561\u9986\u4f4e\u8bed',
+    description: '\u67d4\u548c\u80cc\u666f\u6c1b\u56f4\u5f31\u5316\u7a81\u5140\u804a\u5929\u58f0\u3002',
+    image: assetPath('/scenes/cafe-murmur.png'),
+  },
+  ocean_low: {
+    label: '\u6d77\u6d0b\u4f4e\u9891',
+    description: '\u4f4e\u9891\u6d77\u6d6a\u9002\u5408\u8986\u76d6\u8f66\u6d41\u3001\u7a7a\u8c03\u548c\u8fdc\u5904\u8f70\u9e23\u3002',
+    image: assetPath('/scenes/ocean-low.png'),
+  },
+  forest_breeze: {
+    label: '\u68ee\u6797\u8f7b\u98ce',
+    description: '\u8f7b\u67d4\u81ea\u7136\u58f0\u9002\u5408\u5b89\u9759\u73af\u5883\u4e0b\u8fdb\u5165\u4e13\u6ce8\u3002',
+    image: assetPath('/scenes/forest-breeze.png'),
+  },
+  deep_focus: {
+    label: '\u6df1\u5ea6\u4e13\u6ce8',
+    description: '\u7a33\u5b9a\u8fde\u7eed\u58f0\u573a\u9002\u5408\u957f\u65f6\u95f4\u5b66\u4e60\u548c\u5199\u4f5c\u3002',
+    image: assetPath('/scenes/deep-focus.png'),
+  },
+};
 
-function RainIllustration({ isAnalyzing }: { isAnalyzing: boolean }) {
+function SceneParticles({ scene }: { scene: SceneType }) {
+  const count = scene === 'rain_focus' ? 46 : scene === 'deep_focus' ? 18 : 14;
+
   return (
-    <div className={styles.rainScene} aria-hidden="true">
-      <div className={styles.rainWindow}>
-        <div className={styles.rainSky} />
-        {/* rain streaks on glass */}
-        {Array.from({ length: 24 }).map((_, i) => (
-          <span key={`rd-${i}`} className={styles.rainDrop}
-                style={{ '--rx': (i % 5) * 22 + 6, '--ry': -(i * 4.5), '--rs': 0.7 + (i % 4) * 0.25, '--rd': -(i * 0.16) } as CSSProperties} />
-        ))}
-        {/* foggy window edge */}
-        <div className={styles.rainFog} />
-        <div className={styles.rainWindowFrame} />
-      </div>
-      {/* puddle */}
-      <div className={styles.rainPuddle}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span key={`rr-${i}`} style={{ '--ri': i } as CSSProperties} />
-        ))}
-      </div>
-      <div className={styles.rainDesk} />
-      <div className={styles.rainMug} />
-      <div className={styles.rainSceneLabel}>{'\u96e8\u58f0\u4e13\u6ce8'}</div>
-      <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
-        <div className={styles.waveLines}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ '--i': i } as CSSProperties} />
-          ))}
-        </div>
-        <div className={styles.waveOrb}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5" /></svg>
-        </div>
-      </div>
+    <div className={`${styles.particles} ${styles[`${scene}Particles`]}`} aria-hidden="true">
+      {Array.from({ length: count }).map((_, index) => (
+        <span
+          key={index}
+          style={{
+            '--i': index,
+            '--x': `${(index * 17 + 9) % 100}%`,
+            '--y': `${(index * 23 + 7) % 100}%`,
+            '--delay': `${index * -0.17}s`,
+            '--len': `${10 + (index % 6) * 5}px`,
+            '--alpha': `${0.12 + (index % 5) * 0.055}`,
+            '--dur': `${2.2 + (index % 7) * 0.34}s`,
+          } as CSSProperties}
+        />
+      ))}
     </div>
   );
 }
 
-function CafeIllustration({ isAnalyzing }: { isAnalyzing: boolean }) {
+function WaveOverlay({ isAnalyzing }: { isAnalyzing: boolean }) {
   return (
-    <div className={styles.cafeScene} aria-hidden="true">
-      <div className={styles.cafeInterior}>
-        <div className={styles.cafeWall} />
-        <div className={styles.cafeLamp} />
-        <div className={styles.cafeLight} />
-        {/* warm floating motes */}
-        {Array.from({ length: 12 }).map((_, i) => (
-          <span key={`cm-${i}`} className={styles.cafeMote}
-                style={{ '--mx': (i * 13 + 5) % 90, '--my': 30 + (i % 6) * 12, '--md': -(i * 0.3) } as CSSProperties} />
+    <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
+      <div className={styles.waveNoise} />
+      <div className={styles.waveLines}>
+        {Array.from({ length: 22 }).map((_, index) => (
+          <span key={index} style={{ '--i': index } as CSSProperties} />
         ))}
       </div>
-      <div className={styles.cafeTable} />
-      <div className={styles.cafeCup}>
-        <div className={styles.cafeSteam}>
-          <span /><span /><span />
-        </div>
-      </div>
-      <div className={styles.cafeBook} />
-      <div className={styles.cafeSceneLabel}>{'\u5496\u5561\u9986\u4f4e\u8bed'}</div>
-      <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
-        <div className={styles.waveLines}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ '--i': i } as CSSProperties} />
-          ))}
-        </div>
-        <div className={styles.waveOrb}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5" /></svg>
-        </div>
+      <div className={styles.waveOrb}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 12h3l2-5 4 10 2-5h5" />
+        </svg>
       </div>
     </div>
   );
 }
-
-function OceanIllustration({ isAnalyzing }: { isAnalyzing: boolean }) {
-  return (
-    <div className={styles.oceanScene} aria-hidden="true">
-      <div className={styles.oceanView}>
-        <div className={styles.oceanSky} />
-        <div className={styles.oceanHorizon} />
-        {/* waves */}
-        <div className={styles.oceanWaveBack} />
-        <div className={styles.oceanWaveMid} />
-        <div className={styles.oceanWaveFront} />
-        {/* light shimmer on water */}
-        {Array.from({ length: 8 }).map((_, i) => (
-          <span key={`os-${i}`} className={styles.oceanShimmer}
-                style={{ '--sx': 10 + (i * 11), '--sy': 60 + (i % 4) * 8, '--sd': i * 0.4 } as CSSProperties} />
-        ))}
-      </div>
-      <div className={styles.oceanSceneLabel}>{'\u6d77\u6d0b\u4f4e\u9891'}</div>
-      <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
-        <div className={styles.waveLines}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ '--i': i } as CSSProperties} />
-          ))}
-        </div>
-        <div className={styles.waveOrb}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5" /></svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ForestIllustration({ isAnalyzing }: { isAnalyzing: boolean }) {
-  return (
-    <div className={styles.forestScene} aria-hidden="true">
-      <div className={styles.forestGlade}>
-        <div className={styles.forestSky} />
-        <div className={styles.forestSun} />
-        {/* trees */}
-        <div className={`${styles.forestTree} ${styles.forestTreeLeft}`}>
-          <div className={styles.forestTrunk} />
-          <div className={styles.forestCanopy} />
-        </div>
-        <div className={`${styles.forestTree} ${styles.forestTreeRight}`}>
-          <div className={styles.forestTrunk} />
-          <div className={styles.forestCanopy} />
-        </div>
-        {/* floating leaves */}
-        {Array.from({ length: 10 }).map((_, i) => (
-          <span key={`fl-${i}`} className={styles.forestLeaf}
-                style={{ '--lx': (i * 8 + 2) % 90, '--ly': 10 + (i % 7) * 10, '--ld': -(i * 0.5) } as CSSProperties} />
-        ))}
-        <div className={styles.forestGround} />
-      </div>
-      <div className={styles.forestSceneLabel}>{'\u68ee\u6797\u8f7b\u98ce'}</div>
-      <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
-        <div className={styles.waveLines}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ '--i': i } as CSSProperties} />
-          ))}
-        </div>
-        <div className={styles.waveOrb}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5" /></svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DeepFocusIllustration({ isAnalyzing }: { isAnalyzing: boolean }) {
-  return (
-    <div className={styles.deepScene} aria-hidden="true">
-      <div className={styles.deepRoom}>
-        <div className={styles.deepWall} />
-        <div className={styles.deepGlow} />
-        {/* subtle pulse rings */}
-        <div className={styles.deepRing1} />
-        <div className={styles.deepRing2} />
-        <div className={styles.deepDesk} />
-        <div className={styles.deepLamp} />
-      </div>
-      <div className={styles.deepSceneLabel}>{'\u6df1\u5ea6\u4e13\u6ce8'}</div>
-      <div className={`${styles.waveCard} ${isAnalyzing ? styles.waveActive : ''}`}>
-        <div className={styles.waveLines}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ '--i': i } as CSSProperties} />
-          ))}
-        </div>
-        <div className={styles.waveOrb}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h3l2-5 4 10 2-5h5" /></svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ================================================================
-   MAIN COMPONENT
-   ================================================================ */
 
 export function DetectionPanel({ status, onStart, onManualSelect, error, currentScene }: Props) {
   const isIdle = status === 'idle' || status === 'error';
   const isAnalyzing = status === 'requesting' || status === 'analyzing';
   const isDone = status === 'done';
-  const sceneClass = currentScene ? styles[currentScene] : styles.forest_breeze;
-
-  const renderIllustration = () => {
-    switch (currentScene) {
-      case 'rain_focus': return <RainIllustration isAnalyzing={isAnalyzing} />;
-      case 'cafe_murmur': return <CafeIllustration isAnalyzing={isAnalyzing} />;
-      case 'ocean_low': return <OceanIllustration isAnalyzing={isAnalyzing} />;
-      case 'forest_breeze': return <ForestIllustration isAnalyzing={isAnalyzing} />;
-      case 'deep_focus': return <DeepFocusIllustration isAnalyzing={isAnalyzing} />;
-      default: return <ForestIllustration isAnalyzing={isAnalyzing} />;
-    }
-  };
+  const scene = currentScene || 'forest_breeze';
+  const meta = sceneMeta[scene];
 
   return (
-    <section className={`${styles.hero} ${sceneClass}`} aria-label={'\u566a\u97f3\u68c0\u6d4b'}>
+    <section className={`${styles.hero} ${styles[scene]}`} aria-label={'\u566a\u97f3\u68c0\u6d4b'}>
       <div className={styles.heroCopy}>
         <p className={styles.kicker}>AI sound masking</p>
         <h1 className={styles.headline}>
@@ -211,13 +96,23 @@ export function DetectionPanel({ status, onStart, onManualSelect, error, current
           <span>{'\u627e\u56de\u4f60\u7684\u5b81\u9759'}</span>
         </h1>
         <p className={styles.subhead}>
-          {'\u9002\u5408\u529e\u516c\u5ba4\u3001\u56fe\u4e66\u9986\u548c\u81ea\u4e60\u5ba4\u3002\u672c\u5730\u5206\u6790\u73af\u5883\u58f0\uff0c\u7528\u5408\u9002\u7684\u58f0\u573a\u964d\u4f4e\u5e72\u6270\u611f\u3002'}
+          {'\u672c\u5730\u5206\u6790\u73af\u5883\u58f0\uff0c\u81ea\u52a8\u5339\u914d\u9002\u5408\u4f60\u7684\u4e13\u6ce8\u58f0\u573a\u3002'}
         </p>
       </div>
 
-      <div key={currentScene || 'empty'} className={styles.illustration} aria-hidden="true">
+      <div key={scene} className={styles.sceneStage} aria-hidden="true">
         <div className={styles.stageWipe} />
-        {renderIllustration()}
+        <img className={styles.sceneImage} src={meta.image} alt="" />
+        <div className={styles.sceneShade} />
+        <div className={styles.curtainLeft} />
+        <div className={styles.curtainRight} />
+        <div className={styles.lightSweep} />
+        <div className={styles.sceneLabel}>
+          <strong>{meta.label}</strong>
+          <span>{meta.description}</span>
+        </div>
+        <SceneParticles scene={scene} />
+        <WaveOverlay isAnalyzing={isAnalyzing} />
       </div>
 
       <div className={styles.actions}>
@@ -241,7 +136,7 @@ export function DetectionPanel({ status, onStart, onManualSelect, error, current
       {error && (
         <div className={styles.errorBanner} role="alert">
           <span className={styles.errorBannerTitle}>
-            {'\u26a0 \u65e0\u6cd5\u8bbf\u95ee\u9ea6\u514b\u98ce'}
+            {'\u65e0\u6cd5\u8bbf\u95ee\u9ea6\u514b\u98ce'}
           </span>
           <span>
             {'\u4f60\u4ecd\u7136\u53ef\u4ee5\u624b\u52a8\u9009\u62e9\u58f0\u573a\uff0c\u76f4\u63a5\u5f00\u59cb\u63a9\u853d\u3002'}
