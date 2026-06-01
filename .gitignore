@@ -3,3 +3,4 @@ dist
 .git
 *.log
 .DS_Store
+public/audio/[0-9]*.mp3
