@@ -7,8 +7,8 @@ const ANALYSIS_INTERVAL_MS = 260;
 const STABILITY_WINDOW = 5;
 const MIN_TYPE_HOLD_MS = 1800;
 const INTENSITY_SMOOTHING = 0.34;
-const DEFAULT_NOISE_FLOOR = 0.012;
-const FLOOR_SMOOTHING = 0.055;
+const DEFAULT_NOISE_FLOOR = 0.008;
+const FLOOR_SMOOTHING = 0.04;
 const CALIBRATION_SAMPLES = 7;
 
 function chooseStableType(samples: NoiseType[], fallback: NoiseType | null): NoiseType | null {
@@ -89,14 +89,14 @@ export function useAudioAnalyzer() {
     const sorted = [...samples].sort((a, b) => a - b);
     const lowHalf = sorted.slice(0, Math.max(1, Math.ceil(sorted.length / 2)));
     const baseline = lowHalf.reduce((sum, value) => sum + value, 0) / lowHalf.length;
-    noiseFloorRef.current = Math.max(0.004, Math.min(baseline, 0.035));
+    noiseFloorRef.current = Math.max(0.003, Math.min(baseline * 0.82, 0.026));
   }, [readFeatures]);
 
   const analyzeOnce = useCallback(() => {
     const features = readFeatures();
     if (!features) return;
 
-    if (features.rms < noiseFloorRef.current * 1.35) {
+    if (features.rms < noiseFloorRef.current * 1.22) {
       noiseFloorRef.current =
         noiseFloorRef.current * (1 - FLOOR_SMOOTHING) + features.rms * FLOOR_SMOOTHING;
     }
@@ -152,9 +152,9 @@ export function useAudioAnalyzer() {
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
         },
       });
 
@@ -165,7 +165,7 @@ export function useAudioAnalyzer() {
       const source = audioContext.createMediaStreamSource(stream);
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 2048;
-      analyser.smoothingTimeConstant = 0.86;
+      analyser.smoothingTimeConstant = 0.72;
       source.connect(analyser);
       analyserRef.current = analyser;
 

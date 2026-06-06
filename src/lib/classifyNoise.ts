@@ -1,10 +1,10 @@
 import type { AudioFeatures, NoiseType } from '../types/audio';
 
 export function classifyNoise(features: AudioFeatures, noiseFloor = 0.012): NoiseType {
-  const floor = Math.max(0.004, Math.min(noiseFloor, 0.035));
-  const quietThreshold = Math.max(floor * 1.38, 0.010);
-  const speechThreshold = Math.max(floor * 1.75, floor + 0.0055);
-  const activeThreshold = Math.max(floor * 1.45, floor + 0.004);
+  const floor = Math.max(0.003, Math.min(noiseFloor, 0.028));
+  const quietThreshold = Math.max(floor * 1.22, 0.0065);
+  const speechThreshold = Math.max(floor * 1.34, floor + 0.0022);
+  const activeThreshold = Math.max(floor * 1.24, floor + 0.0018);
   const stableVariance = 0.0001;
 
   if (features.rms < quietThreshold && features.peakCount < 6) {
@@ -13,16 +13,16 @@ export function classifyNoise(features: AudioFeatures, noiseFloor = 0.012): Nois
 
   if (
     features.rms >= speechThreshold &&
-    features.midFreqRatio > 0.24 &&
-    features.volumeVariance > 0.000025
+    features.midFreqRatio > 0.18 &&
+    features.volumeVariance > 0.000008
   ) {
     return 'speech';
   }
 
   if (
     features.rms >= activeThreshold &&
-    features.midFreqRatio > 0.31 &&
-    features.highFreqRatio < 0.58
+    features.midFreqRatio > 0.22 &&
+    features.highFreqRatio < 0.68
   ) {
     return 'speech';
   }
@@ -49,8 +49,8 @@ export function classifyNoise(features: AudioFeatures, noiseFloor = 0.012): Nois
 
   if (
     features.rms >= activeThreshold &&
-    features.midFreqRatio > 0.26 &&
-    features.volumeVariance > 0.00004
+    features.midFreqRatio > 0.19 &&
+    features.volumeVariance > 0.000012
   ) {
     return 'speech';
   }
@@ -59,9 +59,9 @@ export function classifyNoise(features: AudioFeatures, noiseFloor = 0.012): Nois
 }
 
 export function calculateIntensity(features: AudioFeatures, noiseFloor = 0.008): number {
-  const floor = Math.max(0.004, Math.min(noiseFloor, 0.035));
+  const floor = Math.max(0.003, Math.min(noiseFloor, 0.028));
   const relativeRms = Math.max(0, features.rms - floor);
-  const rmsScore = Math.min(relativeRms * 1800 + features.rms * 300, 82);
-  const varianceScore = Math.min(features.volumeVariance * 14000, 18);
+  const rmsScore = Math.min(relativeRms * 2800 + features.rms * 420, 82);
+  const varianceScore = Math.min(features.volumeVariance * 18000, 18);
   return Math.max(0, Math.min(Math.round(rmsScore + varianceScore), 100));
 }
