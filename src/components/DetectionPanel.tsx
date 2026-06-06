@@ -15,27 +15,27 @@ const sceneMeta: Record<SceneType, { label: string; description: string; image: 
   rain_focus: {
     label: '\u96e8\u58f0\u4e13\u6ce8',
     description: '\u7ec6\u5bc6\u96e8\u58f0\u9002\u5408\u63a9\u853d\u4f4e\u8bed\u3001\u952e\u76d8\u548c\u7ffb\u4e66\u58f0\u3002',
-    image: assetPath('/scenes/rain-focus.png'),
+    image: assetPath('/scenes/rain-focus.webp'),
   },
   cafe_murmur: {
     label: '\u5496\u5561\u9986\u4f4e\u8bed',
     description: '\u67d4\u548c\u80cc\u666f\u6c1b\u56f4\u5f31\u5316\u7a81\u5140\u804a\u5929\u58f0\u3002',
-    image: assetPath('/scenes/cafe-murmur.png'),
+    image: assetPath('/scenes/cafe-murmur.webp'),
   },
   ocean_low: {
     label: '\u6d77\u6d0b\u4f4e\u9891',
     description: '\u4f4e\u9891\u6d77\u6d6a\u9002\u5408\u8986\u76d6\u8f66\u6d41\u3001\u7a7a\u8c03\u548c\u8fdc\u5904\u8f70\u9e23\u3002',
-    image: assetPath('/scenes/ocean-low.png'),
+    image: assetPath('/scenes/ocean-low.webp'),
   },
   forest_breeze: {
     label: '\u68ee\u6797\u8f7b\u98ce',
     description: '\u8f7b\u67d4\u81ea\u7136\u58f0\u9002\u5408\u5b89\u9759\u73af\u5883\u4e0b\u8fdb\u5165\u4e13\u6ce8\u3002',
-    image: assetPath('/scenes/forest-breeze.png'),
+    image: assetPath('/scenes/forest-breeze.webp'),
   },
   deep_focus: {
     label: '\u6df1\u5ea6\u4e13\u6ce8',
     description: '\u7a33\u5b9a\u8fde\u7eed\u58f0\u573a\u9002\u5408\u957f\u65f6\u95f4\u5b66\u4e60\u548c\u5199\u4f5c\u3002',
-    image: assetPath('/scenes/deep-focus.png'),
+    image: assetPath('/scenes/deep-focus.webp'),
   },
 };
 
@@ -102,7 +102,15 @@ export function DetectionPanel({ status, onStart, onManualSelect, error, current
 
       <div key={scene} className={styles.sceneStage} aria-hidden="true">
         <div className={styles.stageWipe} />
-        <img className={styles.sceneImage} src={meta.image} alt="" />
+        <img
+          className={styles.sceneImage}
+          src={meta.image}
+          width="1280"
+          height="720"
+          decoding="async"
+          fetchPriority={scene === 'forest_breeze' ? 'high' : 'auto'}
+          alt=""
+        />
         <div className={styles.sceneShade} />
         <div className={styles.curtainLeft} />
         <div className={styles.curtainRight} />
