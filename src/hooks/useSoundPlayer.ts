@@ -25,10 +25,15 @@ export function useSoundPlayer() {
     }
   }, [volume, maskingStrength, getFinalVolume]);
 
-  const play = useCallback(() => {
+  const play = useCallback(async () => {
     if (audioRef.current && currentScene) {
-      audioRef.current.play().catch(console.error);
-      setStatus('playing');
+      try {
+        await audioRef.current.play();
+        setStatus('playing');
+      } catch (err) {
+        console.error(err);
+        setStatus('paused');
+      }
     }
   }, [currentScene]);
 
@@ -83,7 +88,10 @@ export function useSoundPlayer() {
 
             // 渐强效果
             if (status === 'playing') {
-              audio.play().catch(console.error);
+              audio.play().catch((err) => {
+                console.error(err);
+                setStatus('paused');
+              });
               audio.volume = 0;
               let fadeStart: number | null = null;
               const fadeIn = (ts: number) => {

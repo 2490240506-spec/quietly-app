@@ -7,6 +7,9 @@ const ANALYSIS_INTERVAL_MS = 260;
 const STABILITY_WINDOW = 5;
 const MIN_TYPE_HOLD_MS = 1800;
 const INTENSITY_SMOOTHING = 0.34;
+const DEFAULT_NOISE_FLOOR = 0.012;
+const FLOOR_SMOOTHING = 0.055;
+const CALIBRATION_SAMPLES = 7;
 
 function chooseStableType(samples: NoiseType[], fallback: NoiseType | null): NoiseType | null {
   if (samples.length < 3) return fallback;
@@ -50,9 +53,10 @@ export function useAudioAnalyzer() {
   const currentTypeRef = useRef<NoiseType | null>(null);
   const lastTypeChangeRef = useRef(0);
   const intensityRef = useRef(0);
+  const noiseFloorRef = useRef(DEFAULT_NOISE_FLOOR);
 
-  const analyzeOnce = useCallback(() => {
-    if (!analyserRef.current) return;
+  const readFeatures = useCallback(() => {
+    if (!analyserRef.current) return null;
 
     const analyser = analyserRef.current;
     const frequencyData = new Uint8Array(analyser.frequencyBinCount);
@@ -61,14 +65,44 @@ export function useAudioAnalyzer() {
     analyser.getByteFrequencyData(frequencyData);
     analyser.getByteTimeDomainData(timeData);
 
-    const features = extractFeatures(
+    return extractFeatures(
       frequencyData,
       timeData,
       audioContextRef.current?.sampleRate || 44100
     );
+  }, []);
 
-    const rawType = classifyNoise(features);
-    const rawIntensity = calculateIntensity(features);
+  const calibrateNoiseFloor = useCallback(async () => {
+    const samples: number[] = [];
+
+    for (let i = 0; i < CALIBRATION_SAMPLES; i += 1) {
+      await new Promise((resolve) => setTimeout(resolve, ANALYSIS_INTERVAL_MS));
+      const features = readFeatures();
+      if (features) samples.push(features.rms);
+    }
+
+    if (!samples.length) {
+      noiseFloorRef.current = DEFAULT_NOISE_FLOOR;
+      return;
+    }
+
+    const sorted = [...samples].sort((a, b) => a - b);
+    const lowHalf = sorted.slice(0, Math.max(1, Math.ceil(sorted.length / 2)));
+    const baseline = lowHalf.reduce((sum, value) => sum + value, 0) / lowHalf.length;
+    noiseFloorRef.current = Math.max(0.004, Math.min(baseline, 0.035));
+  }, [readFeatures]);
+
+  const analyzeOnce = useCallback(() => {
+    const features = readFeatures();
+    if (!features) return;
+
+    if (features.rms < noiseFloorRef.current * 1.35) {
+      noiseFloorRef.current =
+        noiseFloorRef.current * (1 - FLOOR_SMOOTHING) + features.rms * FLOOR_SMOOTHING;
+    }
+
+    const rawType = classifyNoise(features, noiseFloorRef.current);
+    const rawIntensity = calculateIntensity(features, noiseFloorRef.current);
     const nextIntensity =
       intensityRef.current * (1 - INTENSITY_SMOOTHING) + rawIntensity * INTENSITY_SMOOTHING;
 
@@ -92,7 +126,7 @@ export function useAudioAnalyzer() {
       lastTypeChangeRef.current = now;
       setNoiseType(stableType);
     }
-  }, []);
+  }, [readFeatures]);
 
   const startLoop = useCallback(() => {
     if (timerRef.current) {
@@ -139,9 +173,10 @@ export function useAudioAnalyzer() {
       currentTypeRef.current = null;
       lastTypeChangeRef.current = 0;
       intensityRef.current = 0;
+      noiseFloorRef.current = DEFAULT_NOISE_FLOOR;
 
       setStatus('analyzing');
-      await new Promise((resolve) => setTimeout(resolve, 1800));
+      await calibrateNoiseFloor();
       startLoop();
       setStatus('done');
     } catch (err: any) {
@@ -159,7 +194,7 @@ export function useAudioAnalyzer() {
         setError('\u9ea6\u514b\u98ce\u8bbf\u95ee\u5931\u8d25\u3002\u5982\u679c\u4f60\u5728 Codex \u5185\u7f6e\u6d4f\u89c8\u5668\u4e2d\u9884\u89c8\uff0c\u8bf7\u6539\u7528 Chrome \u6216 Edge \u6253\u5f00\u672c\u5730\u5730\u5740\u3002');
       }
     }
-  }, [startLoop]);
+  }, [calibrateNoiseFloor, startLoop]);
 
   const stop = useCallback(() => {
     if (timerRef.current) {
@@ -177,6 +212,7 @@ export function useAudioAnalyzer() {
     analyserRef.current = null;
     samplesRef.current = [];
     currentTypeRef.current = null;
+    noiseFloorRef.current = DEFAULT_NOISE_FLOOR;
     setStatus('idle');
     setNoiseType(null);
     setIntensity(0);

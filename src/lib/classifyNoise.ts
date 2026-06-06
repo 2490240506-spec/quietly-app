@@ -1,23 +1,33 @@
 import type { AudioFeatures, NoiseType } from '../types/audio';
 
-export function classifyNoise(features: AudioFeatures): NoiseType {
-  const quietThreshold = 0.02;
-  const veryQuietThreshold = 0.012;
+export function classifyNoise(features: AudioFeatures, noiseFloor = 0.012): NoiseType {
+  const floor = Math.max(0.004, Math.min(noiseFloor, 0.035));
+  const quietThreshold = Math.max(floor * 1.38, 0.010);
+  const speechThreshold = Math.max(floor * 1.75, floor + 0.0055);
+  const activeThreshold = Math.max(floor * 1.45, floor + 0.004);
   const stableVariance = 0.0001;
 
-  if (features.rms < veryQuietThreshold) {
+  if (features.rms < quietThreshold && features.peakCount < 6) {
     return 'quiet';
   }
 
   if (
-    features.rms > quietThreshold * 1.25 &&
-    features.midFreqRatio > 0.3 &&
-    features.volumeVariance > 0.00016
+    features.rms >= speechThreshold &&
+    features.midFreqRatio > 0.24 &&
+    features.volumeVariance > 0.000025
   ) {
     return 'speech';
   }
 
-  if (features.suddenPeakDetected && features.rms > quietThreshold * 1.2) {
+  if (
+    features.rms >= activeThreshold &&
+    features.midFreqRatio > 0.31 &&
+    features.highFreqRatio < 0.58
+  ) {
+    return 'speech';
+  }
+
+  if (features.suddenPeakDetected && features.rms > Math.max(floor * 2.4, 0.024)) {
     return 'sudden';
   }
 
@@ -33,19 +43,25 @@ export function classifyNoise(features: AudioFeatures): NoiseType {
     return 'traffic';
   }
 
-  if (features.volumeVariance < stableVariance && features.rms >= quietThreshold) {
+  if (features.volumeVariance < stableVariance && features.rms >= activeThreshold) {
     return 'fan';
   }
 
-  if (features.midFreqRatio > 0.28 && features.volumeVariance > 0.00012) {
+  if (
+    features.rms >= activeThreshold &&
+    features.midFreqRatio > 0.26 &&
+    features.volumeVariance > 0.00004
+  ) {
     return 'speech';
   }
 
   return 'unknown';
 }
 
-export function calculateIntensity(features: AudioFeatures): number {
-  const rmsScore = Math.min(features.rms * 900, 82);
-  const varianceScore = Math.min(features.volumeVariance * 9000, 18);
+export function calculateIntensity(features: AudioFeatures, noiseFloor = 0.008): number {
+  const floor = Math.max(0.004, Math.min(noiseFloor, 0.035));
+  const relativeRms = Math.max(0, features.rms - floor);
+  const rmsScore = Math.min(relativeRms * 1800 + features.rms * 300, 82);
+  const varianceScore = Math.min(features.volumeVariance * 14000, 18);
   return Math.max(0, Math.min(Math.round(rmsScore + varianceScore), 100));
 }
